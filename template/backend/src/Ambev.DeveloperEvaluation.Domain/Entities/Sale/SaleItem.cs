@@ -1,6 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.ValueObjects.DiscountPolicy;
 
-namespace Ambev.DeveloperEvaluation.Domain.Entities
+namespace Ambev.DeveloperEvaluation.Domain.Entities.Sale
 {
     public class SaleItem
     {
