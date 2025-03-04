@@ -8,7 +8,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.SalesTest;
 /// Contains unit tests for the DiscountPolicy value object.
 /// These tests validate the discount calculation logic based on various quantity scenarios.
 /// </summary>
-public class DiscountPolicyTests
+public class SaleDiscountPolicyTests
 {
     private readonly DiscountPolicy _discountPolicy = new();
 
