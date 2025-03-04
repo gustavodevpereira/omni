@@ -1,8 +1,7 @@
-﻿using Bogus;
-using Xunit;
-using Ambev.DeveloperEvaluation.Domain.Entities;
-using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
+﻿using Xunit;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects.DiscountPolicy;
+using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
+using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
 
 namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.SalesTest
 {
