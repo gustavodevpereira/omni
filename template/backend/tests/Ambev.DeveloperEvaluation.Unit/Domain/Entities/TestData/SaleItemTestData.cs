@@ -1,6 +1,6 @@
 ﻿using Bogus;
-using Ambev.DeveloperEvaluation.Domain.Entities;
 using System;
+using Ambev.DeveloperEvaluation.Domain.Entities.Sale;
 
 namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData
 {
