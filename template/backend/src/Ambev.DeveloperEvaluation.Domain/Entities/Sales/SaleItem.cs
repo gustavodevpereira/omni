@@ -1,4 +1,6 @@
-﻿using Ambev.DeveloperEvaluation.Domain.ValueObjects.DiscountPolicy;
+﻿using Ambev.DeveloperEvaluation.Common.Validation;
+using Ambev.DeveloperEvaluation.Domain.Validation;
+using Ambev.DeveloperEvaluation.Domain.ValueObjects.DiscountPolicy;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities.Sales;
 
@@ -52,7 +54,7 @@ public class SaleItem
     /// <param name="quantity">The quantity of the product sold.</param>
     /// <param name="unitPrice">The unit price of the product.</param>
     /// <exception cref="DomainException">Thrown when the quantity is not between 1 and 20.</exception>
-    public SaleItem(string productExternalId, string productName, int quantity, decimal unitPrice)
+    internal SaleItem(string productExternalId, string productName, int quantity, decimal unitPrice)
     {
         if (quantity < 1 || quantity > 20)
             throw new DomainException("Quantity must be between 1 and 20.");
@@ -64,6 +66,17 @@ public class SaleItem
         UnitPrice = unitPrice;
         DiscountPercentage = GetDiscountPercentage(quantity);
         TotalAmount = CalculateTotalAmount();
+    }
+
+    public ValidationResultDetail Validate()
+    {
+        var validator = new SaleItemValidator();
+        var result = validator.Validate(this);
+        return new ValidationResultDetail
+        {
+            IsValid = result.IsValid,
+            Errors = result.Errors.Select(o => (ValidationErrorDetail)o)
+        };
     }
 
     /// <summary>
