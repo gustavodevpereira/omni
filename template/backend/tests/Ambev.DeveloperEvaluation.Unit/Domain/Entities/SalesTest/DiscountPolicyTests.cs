@@ -1,6 +1,6 @@
 ﻿using Bogus;
 using Xunit;
-using Ambev.DeveloperEvaluation.Domain.ValueObjects;
+using Ambev.DeveloperEvaluation.Domain.ValueObjects.DiscountPolicy;
 
 namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.SalesTest;
 
@@ -62,16 +62,18 @@ public class DiscountPolicyTests
     }
 
     /// <summary>
-    /// Tests that an ArgumentException is thrown when the quantity exceeds 20.
+    /// Tests that an DomainException is thrown when the quantity exceeds 20.
+    /// Note: Although validating the maximum quantity is primarily the aggregate's responsibility,
+    /// this test ensures that the DiscountPolicy remains consistent with the business rules.
     /// </summary>
     [Fact(DisplayName = "Should throw ArgumentException for quantities greater than 20")]
     public void GetDiscountPercentage_WhenQuantityGreaterThan20_ThrowsArgumentException()
     {
         // Arrange
-        int quantity = 21;
+        const int quantity = 21;
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => _discountPolicy.GetDiscountPercentage(quantity));
+        Assert.Throws<DomainException>(() => _discountPolicy.GetDiscountPercentage(quantity));
     }
 
     /// <summary>
