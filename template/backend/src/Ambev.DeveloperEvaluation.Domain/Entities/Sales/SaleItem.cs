@@ -1,6 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.ValueObjects.DiscountPolicy;
 
-namespace Ambev.DeveloperEvaluation.Domain.Entities.Sale;
+namespace Ambev.DeveloperEvaluation.Domain.Entities.Sales;
 
 /// <summary>
 /// Represents an item in a sale, encapsulating product details, quantity, pricing, discount calculation, and total amount.
