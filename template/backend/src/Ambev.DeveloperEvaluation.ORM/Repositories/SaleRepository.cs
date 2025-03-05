@@ -1,6 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
+using Ambev.DeveloperEvaluation.Domain.Entities.Users;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories
 {
@@ -13,15 +13,10 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             _context = context;
         }
 
-        public async Task<Sale?> GetSaleByIdAsync(int saleId, CancellationToken cancellationToken)
+        public async Task<Sale> CreateAsync(Sale sale, CancellationToken cancellationToken)
         {
-            return await _context.Sales.FindAsync([saleId], cancellationToken);
-        }
-
-        public async Task UpdateSaleAsync(Sale sale, CancellationToken cancellationToken)
-        {
-            _context.Sales.Update(sale);
-            await Task.CompletedTask;
+            await _context.Sales.AddAsync(sale, cancellationToken);
+            return sale;
         }
     }
 }
