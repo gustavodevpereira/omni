@@ -1,12 +1,20 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Events.Sales;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales;
 
 public class SaleCancelledHandler : INotificationHandler<SaleCancelledEvent>
 {
-    public Task Handle(SaleCancelledEvent notification, CancellationToken cancellationToken)
+    private readonly ILogger<SaleCancelledHandler> _logger;
+
+    public SaleCancelledHandler(ILogger<SaleCancelledHandler> logger)
     {
-        throw new NotImplementedException();
+        _logger = logger;
+    }
+
+    public async Task Handle(SaleCancelledEvent notification, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation($" The sale with Id <{notification.Sale.Id}> was cancelled");
     }
 }

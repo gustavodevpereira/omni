@@ -15,6 +15,6 @@ public class SaleCreatedEventHandler : INotificationHandler<SaleCreatedEvent>
 
     public async Task Handle(SaleCreatedEvent notification, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Processando SaleCreatedEvent para a venda com ID: {notification.Sale.Id}");
+        _logger.LogInformation($" The sale with id <{notification.Sale.Id}> was created");
     }
 }
