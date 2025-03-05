@@ -1,23 +1,38 @@
 ﻿using Ambev.DeveloperEvaluation.Common.Validation;
+using MediatR;
 
-namespace Ambev.DeveloperEvaluation.Domain.Common;
-
-public class BaseEntity : IComparable<BaseEntity>
+namespace Ambev.DeveloperEvaluation.Domain.Common
 {
-    public Guid Id { get; set; }
-
-    public Task<IEnumerable<ValidationErrorDetail>> ValidateAsync()
+    public class BaseEntity : IComparable<BaseEntity>
     {
-        return Validator.ValidateAsync(this);
-    }
+        private readonly List<INotification> _domainEvents = new();
+        public IReadOnlyCollection<INotification> DomainEvents => _domainEvents.AsReadOnly();
 
-    public int CompareTo(BaseEntity? other)
-    {
-        if (other == null)
+        public Guid Id { get; set; }
+
+        public Task<IEnumerable<ValidationErrorDetail>> ValidateAsync()
         {
-            return 1;
+            return Validator.ValidateAsync(this);
         }
 
-        return other!.Id.CompareTo(Id);
+        public int CompareTo(BaseEntity? other)
+        {
+            if (other == null)
+            {
+                return 1;
+            }
+
+            return other.Id.CompareTo(Id);
+        }
+
+        protected void AddDomainEvent(INotification eventItem)
+        {
+            _domainEvents.Add(eventItem);
+        }
+
+        public void ClearDomainEvents()
+        {
+            _domainEvents.Clear();
+        }
     }
 }
