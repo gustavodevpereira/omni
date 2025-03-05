@@ -1,5 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Common;
+using Ambev.DeveloperEvaluation.Domain.Events.Sales;
 using Ambev.DeveloperEvaluation.Domain.Validation;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities.Sales;
@@ -84,6 +85,8 @@ public class Sale : BaseEntity
         Status = SaleStatus.Active;
 
         _items = [];
+
+        AddDomainEvent(new SaleCreatedEvent(this));
     }
 
     public ValidationResultDetail Validate()
