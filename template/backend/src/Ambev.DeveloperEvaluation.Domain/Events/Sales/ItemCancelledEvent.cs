@@ -1,12 +1,12 @@
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
-
+using MediatR;
 namespace Ambev.DeveloperEvaluation.Domain.Events.Sales;
 
 /// <summary>
 /// Domain event that is raised when a sale item is cancelled/removed.
 /// </summary>
-public sealed class ItemCancelledEvent : IDomainEvent
+public sealed class ItemCancelledEvent : INotification
 {
     /// <summary>
     /// Gets the sale from which the item was removed.
