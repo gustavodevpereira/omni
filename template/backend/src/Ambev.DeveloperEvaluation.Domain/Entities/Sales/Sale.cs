@@ -147,6 +147,7 @@ public class Sale : BaseEntity
             throw new DomainException("Sale item not found.");
 
         _items.Remove(saleItem);
+        AddDomainEvent(new ItemCancelledEvent(this, saleItemId));
     }
 
     /// <summary>

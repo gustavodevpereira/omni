@@ -44,35 +44,15 @@ public class RemoveSaleItemHandler : IRequestHandler<RemoveSaleItemCommand, Remo
         if (sale == null)
             throw new KeyNotFoundException($"Sale with ID {request.SaleId} not found");
 
-        try
-        {
-            sale.RemoveItem(request.SaleItemId);
-            
-            // Add domain event for item cancellation
-            sale.AddDomainEvent(new ItemCancelledEvent(sale, request.SaleItemId));
-            
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        sale.RemoveItem(request.SaleItemId);
+        await _unitOfWork.CommitAsync(cancellationToken);
 
-            return new RemoveSaleItemResult
-            {
-                SaleId = sale.Id,
-                SaleNumber = sale.SaleNumber,
-                RemovedSaleItemId = request.SaleItemId,
-                NewTotalAmount = sale.TotalAmount,
-                Success = true,
-                Message = "Sale item removed successfully"
-            };
-        }
-        catch (Exception ex)
+        return new RemoveSaleItemResult
         {
-            return new RemoveSaleItemResult
-            {
-                SaleId = sale.Id,
-                SaleNumber = sale.SaleNumber,
-                RemovedSaleItemId = request.SaleItemId,
-                Success = false,
-                Message = ex.Message
-            };
-        }
+            SaleId = sale.Id,
+            SaleNumber = sale.SaleNumber,
+            RemovedSaleItemId = request.SaleItemId,
+            NewTotalAmount = sale.TotalAmount,
+        };
     }
 } 
