@@ -28,7 +28,16 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale
         /// Gets or sets the name of the customer.
         /// </summary>
         public string CustomerName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the name of the branch.
+        /// </summary>
         public string BranchName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the external identifier of the branch.
+        /// </summary>  
+        public string BranchExternalId { get; set; } = string.Empty;
 
         // Lista de itens da venda
         public List<CreateSaleItemCommand> Items { get; set; } = new List<CreateSaleItemCommand>();
@@ -57,5 +66,6 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale
         /// <summary>
         /// Gets or sets the unit price of the product.
         /// </summary>
+        public decimal UnitPrice { get; set; }
     }
 }
