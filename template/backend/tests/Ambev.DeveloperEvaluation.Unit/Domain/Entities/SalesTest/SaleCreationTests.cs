@@ -1,7 +1,7 @@
 ﻿using System;
 using Xunit;
+using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
 using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData.Sales;
-using Ambev.DeveloperEvaluation.Domain.Enums;
 
 namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.SalesTest;
 
@@ -79,6 +79,7 @@ public class SaleCreationTests
         {
             // Arrange
             var sale = SaleTestData.GenerateValidSale();
+            // Use valid product data
             var productData = SaleTestData.GenerateProductData(quantity: 5, unitPrice: 100m);
 
             // Act
@@ -97,6 +98,7 @@ public class SaleCreationTests
         {
             // Arrange
             var sale = SaleTestData.GenerateValidSale();
+            // Invalid data: empty product name
             const string invalidProductName = "";
             const string validProductExternalId = "TestProductId";
             const int validQuantity = 5;
