@@ -1,5 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Common;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Events.Sales;
 using Ambev.DeveloperEvaluation.Domain.Validation;
 
@@ -118,9 +119,8 @@ public class Sale : BaseEntity
         EnsureSaleModificationAllowed();
 
         var saleItem = new SaleItem(productExternalId, productName, quantity, unitPrice);
-
-        // Get the validation result.
         var validationResult = saleItem.Validate();
+
         if (!validationResult.IsValid)
         {
             var errorMessages = string.Join("; ", validationResult.Errors.Select(e => e.Error));
@@ -143,6 +143,7 @@ public class Sale : BaseEntity
         EnsureSaleModificationAllowed();
 
         var saleItem = _items.FirstOrDefault(item => item.Id == saleItemId);
+
         if (saleItem == null)
             throw new DomainException("Sale item not found.");
 
