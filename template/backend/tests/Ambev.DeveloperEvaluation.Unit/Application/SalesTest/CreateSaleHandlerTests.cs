@@ -9,6 +9,7 @@ using FluentAssertions;
 using FluentValidation;
 using NSubstitute;
 using Xunit;
+using System.Linq;
 
 namespace Ambev.DeveloperEvaluation.Unit.Application.SalesTest;
 
@@ -63,7 +64,24 @@ public class CreateSaleHandlerTests
         // Expected result mapping.
         var expectedResult = new CreateSaleResult
         {
-            Id = sale.Id
+            Id = sale.Id,
+            SaleNumber = sale.SaleNumber,
+            SaleDate = sale.SaleDate,
+            CustomerExternalId = sale.CustomerExternalId,
+            CustomerName = sale.CustomerName,
+            BranchExternalId = sale.BranchExternalId,
+            BranchName = sale.BranchName,
+            Status = sale.Status.ToString(),
+            TotalAmount = sale.TotalAmount,
+            Items = sale.Items.Select(item => new CreateSaleResult.SaleItemDto
+            {
+                Id = item.Id,
+                ProductExternalId = item.ProductExternalId,
+                ProductName = item.ProductName,
+                Quantity = item.Quantity,
+                UnitPrice = item.UnitPrice,
+                TotalAmount = item.TotalAmount
+            }).ToList()
         };
 
         // Configure the mapper and repository substitutes.
@@ -127,8 +145,32 @@ public class CreateSaleHandlerTests
             sale.AddItem(item.ProductExternalId, item.ProductName, item.Quantity, item.UnitPrice);
         }
 
+        // Create a complete result object to match the updated CreateSaleResult class
+        var expectedResult = new CreateSaleResult
+        {
+            Id = sale.Id,
+            SaleNumber = sale.SaleNumber,
+            SaleDate = sale.SaleDate,
+            CustomerExternalId = sale.CustomerExternalId,
+            CustomerName = sale.CustomerName,
+            BranchExternalId = sale.BranchExternalId,
+            BranchName = sale.BranchName,
+            Status = sale.Status.ToString(),
+            TotalAmount = sale.TotalAmount,
+            Items = sale.Items.Select(item => new CreateSaleResult.SaleItemDto
+            {
+                Id = item.Id,
+                ProductExternalId = item.ProductExternalId,
+                ProductName = item.ProductName,
+                Quantity = item.Quantity,
+                UnitPrice = item.UnitPrice,
+                TotalAmount = item.TotalAmount
+            }).ToList()
+        };
+
         // Configure the mapper and repository substitutes.
         _mapper.Map<Sale>(command).Returns(sale);
+        _mapper.Map<CreateSaleResult>(sale).Returns(expectedResult);
         _saleRepository.CreateAsync(Arg.Any<Sale>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(sale));
         _uow.CommitAsync(Arg.Any<CancellationToken>()).Returns(Task.FromResult(1));
