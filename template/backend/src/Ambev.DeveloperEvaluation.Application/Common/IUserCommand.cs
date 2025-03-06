@@ -1,6 +1,6 @@
 ﻿namespace Ambev.DeveloperEvaluation.Application.Common
 {
-    /// <summary>
+       /// <summary>
     /// Interface for commands that require user context information.
     /// </summary>
     /// <remarks>
