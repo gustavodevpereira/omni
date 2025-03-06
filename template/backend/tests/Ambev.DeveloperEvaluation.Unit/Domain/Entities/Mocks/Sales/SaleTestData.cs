@@ -4,11 +4,10 @@ using Bogus;
 namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData.Sales
 {
     /// <summary>
-    /// Centraliza a geração de dados de teste para a entidade Sale, garantindo consistência entre os testes.
+    /// Centralizes test data generation for the Sale entity, ensuring consistency across tests.
     /// </summary>
     public static class SaleTestData
     {
-        // Configuração para geração de uma instância válida de Sale.
         private static readonly Faker<Sale> SaleFaker = new Faker<Sale>()
             .CustomInstantiator(f => new Sale(
                 f.Commerce.Ean13(),
@@ -20,7 +19,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData.Sales
             ));
 
         /// <summary>
-        /// Gera uma instância válida de Sale.
+        /// Generates a valid Sale instance.
         /// </summary>
         public static Sale GenerateValidSale()
         {
@@ -28,9 +27,9 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData.Sales
         }
 
         /// <summary>
-        /// Gera uma instância inválida de Sale, definindo um dos campos obrigatórios como vazio.
-        /// O parâmetro invalidField define qual campo será inválido: "saleNumber", "customerExternalId",
-        /// "customerName", "branchExternalId" ou "branchName".
+        /// Generates an invalid Sale instance by setting one of the required fields as empty.
+        /// The invalidField parameter specifies which field will be invalid: "saleNumber", 
+        /// "customerExternalId", "customerName", "branchExternalId", or "branchName".
         /// </summary>
         public static Sale GenerateInvalidSale(string invalidField)
         {
@@ -46,11 +45,11 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData.Sales
         }
 
         /// <summary>
-        /// Gera os dados de um produto para uso em testes de adição de itens à venda.
+        /// Generates product data for use in tests involving the addition of items to a sale.
         /// </summary>
-        /// <param name="quantity">Quantidade do produto (impacta na aplicação de descontos).</param>
-        /// <param name="unitPrice">Preço unitário do produto (caso não informado, é gerado um valor aleatório entre 10 e 100).</param>
-        /// <returns>Uma tupla contendo o productExternalId, productName, quantity e unitPrice.</returns>
+        /// <param name="quantity">Product quantity (affects discount application).</param>
+        /// <param name="unitPrice">Unit price of the product (if not specified, a random value between 10 and 100 is generated).</param>
+        /// <returns>A tuple containing productExternalId, productName, quantity, and unitPrice.</returns>
         public static (string productExternalId, string productName, int quantity, decimal unitPrice) GenerateProductData(int quantity, decimal? unitPrice = null)
         {
             var faker = new Faker();
