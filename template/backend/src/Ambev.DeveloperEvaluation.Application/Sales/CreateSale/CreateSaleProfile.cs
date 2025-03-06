@@ -11,16 +11,15 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale
     {
         public CreateSaleProfile()
         {
-            // Mapeia os parâmetros do comando para o construtor da entidade Sale
             CreateMap<CreateSaleCommand, Sale>()
-                .ForCtorParam("saleNumber", opt => opt.MapFrom(src => src.SaleNumber))
-                .ForCtorParam("saleDate", opt => opt.MapFrom(src => src.SaleDate))
-                .ForCtorParam("customerExternalId", opt => opt.MapFrom(src => src.CustomerExternalId))
-                .ForCtorParam("customerName", opt => opt.MapFrom(src => src.CustomerName))
-                .ForCtorParam("branchExternalId", opt => opt.MapFrom(src => src.BranchExternalId))
-                .ForCtorParam("branchName", opt => opt.MapFrom(src => src.BranchName));
+               .ForMember(dest => dest.Items, opt => opt.Ignore());
 
-            CreateMap<Sale, CreateSaleResult>();
+            CreateMap<Sale, CreateSaleResult>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
+
+            CreateMap<SaleItem, CreateSaleResult.SaleItemDto>()
+                .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.TotalAmount));
         }
     }
 }
