@@ -14,8 +14,6 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Users;
 /// <summary>
 /// Controller for managing user operations
 /// </summary>
-[ApiController]
-[Route("api/[controller]")]
 public class UsersController : BaseController
 {
     private readonly IMediator _mediator;
@@ -52,12 +50,7 @@ public class UsersController : BaseController
         var command = _mapper.Map<CreateUserCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Created(string.Empty, new ApiResponseWithData<CreateUserResponse>
-        {
-            Success = true,
-            Message = "User created successfully",
-            Data = _mapper.Map<CreateUserResponse>(response)
-        });
+        return Created(string.Empty, _mapper.Map<CreateUserResponse>(response));
     }
 
     /// <summary>
@@ -107,10 +100,6 @@ public class UsersController : BaseController
         var command = _mapper.Map<DeleteUserCommand>(request.Id);
         await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponse
-        {
-            Success = true,
-            Message = "User deleted successfully"
-        });
+        return Ok("User deleted successfully");
     }
 }

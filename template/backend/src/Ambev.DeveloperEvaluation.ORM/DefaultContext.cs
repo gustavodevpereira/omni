@@ -1,5 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities.Products;
-using Ambev.DeveloperEvaluation.Domain.Entities.Sales;
+﻿using Ambev.DeveloperEvaluation.Domain.Entities.Carts;
+using Ambev.DeveloperEvaluation.Domain.Entities.Products;
 using Ambev.DeveloperEvaluation.Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -11,7 +11,7 @@ namespace Ambev.DeveloperEvaluation.ORM;
 public class DefaultContext : DbContext
 {
     public DbSet<User> Users { get; set; }
-    public DbSet<Sale> Sales { get; set; }
+    public DbSet<Cart> Carts { get; set; }
     public DbSet<Product> Products { get; set; }
 
     public DefaultContext(DbContextOptions<DefaultContext> options) : base(options)
