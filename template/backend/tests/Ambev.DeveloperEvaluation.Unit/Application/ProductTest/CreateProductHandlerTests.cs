@@ -2,7 +2,7 @@ using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.Domain.Entities.Products;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
-using Ambev.DeveloperEvaluation.Unit.Application.Mocks;
+using Ambev.DeveloperEvaluation.Unit.Application.Mocks.Product;
 using AutoMapper;
 using FluentAssertions;
 using FluentValidation;

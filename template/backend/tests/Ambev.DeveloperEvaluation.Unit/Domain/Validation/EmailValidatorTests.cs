@@ -1,5 +1,5 @@
 using Ambev.DeveloperEvaluation.Domain.Validation;
-using Ambev.DeveloperEvaluation.Unit.Domain.Entities.Mocks.Users;
+using Ambev.DeveloperEvaluation.Unit.Domain.Mocks.UserMock;
 using FluentValidation.TestHelper;
 using Xunit;
 

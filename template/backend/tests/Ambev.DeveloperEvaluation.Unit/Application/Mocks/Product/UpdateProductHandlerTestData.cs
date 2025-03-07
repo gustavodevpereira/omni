@@ -1,7 +1,7 @@
 using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
 using Bogus;
 
-namespace Ambev.DeveloperEvaluation.Unit.Application.Mocks;
+namespace Ambev.DeveloperEvaluation.Unit.Application.Mocks.Product;
 
 /// <summary>
 /// Provides methods for generating test data for the UpdateProductHandler using the Bogus library.
@@ -30,4 +30,4 @@ public static class UpdateProductHandlerTestData
     {
         return UpdateProductCommandFaker.Generate();
     }
-} 
+}

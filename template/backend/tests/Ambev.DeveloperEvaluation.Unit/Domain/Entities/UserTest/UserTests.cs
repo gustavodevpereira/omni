@@ -1,7 +1,7 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Entities.Users;
 using Ambev.DeveloperEvaluation.Domain.Enums;
-using Ambev.DeveloperEvaluation.Unit.Domain.Entities.Mocks.Users;
+using Ambev.DeveloperEvaluation.Unit.Domain.Mocks.UserMock;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.UserTest;
