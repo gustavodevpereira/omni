@@ -71,32 +71,6 @@ public class Product : BaseEntity
     }
 
     /// <summary>
-    /// Performs validation of the product entity using the ProductValidator rules.
-    /// </summary>
-    /// <returns>
-    /// A <see cref="ValidationResultDetail"/> containing:
-    /// - IsValid: Indicates whether all validation rules passed
-    /// - Errors: Collection of validation errors if any rules failed
-    /// </returns>
-    /// <remarks>
-    /// <listheader>The validation includes checking:</listheader>
-    /// <list type="bullet">Name format and length</list>
-    /// <list type="bullet">SKU format</list>
-    /// <list type="bullet">Price value (must be positive)</list>
-    /// <list type="bullet">Stock quantity (must be non-negative)</list>
-    /// </remarks>
-    public ValidationResultDetail Validate()
-    {
-        var validator = new ProductValidator();
-        var result = validator.Validate(this);
-        return new ValidationResultDetail
-        {
-            IsValid = result.IsValid,
-            Errors = result.Errors.Select(o => (ValidationErrorDetail)o)
-        };
-    }
-
-    /// <summary>
     /// Activates the product.
     /// Changes the product's status to Active.
     /// </summary>
