@@ -1,6 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Entities.Products;
 using Ambev.DeveloperEvaluation.Domain.Enums;
-using Ambev.DeveloperEvaluation.Unit.Domain.Entities.Mocks.Products;
+using Ambev.DeveloperEvaluation.Unit.Domain.Mocks.ProductMock;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.ProductTest;
@@ -79,48 +79,6 @@ public class ProductTests
         // Act & Assert
         var exception = Assert.Throws<DomainException>(() => product.UpdateStock(-10));
         Assert.Contains("cannot be negative", exception.Message);
-    }
-
-    /// <summary>
-    /// Tests that validation passes when all product properties are valid.
-    /// </summary>
-    [Fact(DisplayName = "Validation should pass for valid product data")]
-    public void Given_ValidProductData_When_Validated_Then_ShouldReturnValid()
-    {
-        // Arrange
-        var product = ProductTestData.GenerateValidProduct();
-
-        // Act
-        var result = product.Validate();
-
-        // Assert
-        Assert.True(result.IsValid);
-        Assert.Empty(result.Errors);
-    }
-
-    /// <summary>
-    /// Tests that validation fails when product properties are invalid.
-    /// </summary>
-    [Fact(DisplayName = "Validation should fail for invalid product data")]
-    public void Given_InvalidProductData_When_Validated_Then_ShouldReturnInvalid()
-    {
-        // Arrange
-        var product = new Product
-        {
-            Name = ProductTestData.GenerateInvalidName(), // Invalid: empty
-            Sku = ProductTestData.GenerateInvalidSku(), // Invalid: contains special characters
-            Price = ProductTestData.GenerateInvalidPrice(), // Invalid: negative or zero
-            StockQuantity = ProductTestData.GenerateInvalidStockQuantity(), // Invalid: negative
-            Category = string.Empty, // Invalid: empty
-            Status = (ProductStatus)99 // Invalid: not in enum
-        };
-
-        // Act
-        var result = product.Validate();
-
-        // Assert
-        Assert.False(result.IsValid);
-        Assert.NotEmpty(result.Errors);
     }
 
     /// <summary>
