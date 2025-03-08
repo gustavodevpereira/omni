@@ -398,3 +398,48 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Frontend specific
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+/dist
+/.next/
+/out/
+/.nuxt/
+/.vuepress/dist
+/.serverless/
+/.fusebox/
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Package managers
+yarn.lock
+package-lock.json
+# Keep these if you want to commit locks for consistency
+
+# Editor directories and files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sw?

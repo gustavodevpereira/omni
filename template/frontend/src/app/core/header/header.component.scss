@@ -1,0 +1,89 @@
+/**
+ * Header component styles
+ *
+ * This stylesheet defines the visual appearance of the application header,
+ * including navigation, logo, and responsive behavior.
+ */
+
+/* Base header layout with flexbox */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  
+  /* Ensure the header is accessible at all viewport widths */
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 1rem;
+  }
+}
+
+/* Logo and brand styling */
+.logo a {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  
+  &:hover, &:focus {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  /* Ensure logo is properly sized on smaller screens */
+  @media (max-width: 768px) {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Navigation list styling */
+.nav-list {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  
+  /* Responsive adjustment for navigation */
+  @media (max-width: 768px) {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+/* Individual navigation items */
+.nav-list li {
+  margin-left: 1.5rem;
+  
+  /* Ensure adequate spacing on mobile */
+  @media (max-width: 768px) {
+    margin: 0.5rem;
+  }
+}
+
+/* Navigation link styling */
+.nav-list a {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.3s;
+  padding: 0.5rem 0;
+  
+  /* Hover and focus states for accessibility */
+  &:hover, &:focus {
+    color: #007bff;
+    outline: none;
+    text-decoration: none;
+  }
+  
+  /* Style for interactive elements like the logout button */
+  &[role="button"] {
+    cursor: pointer;
+    
+    &:hover, &:focus {
+      text-decoration: underline;
+    }
+  }
+}
