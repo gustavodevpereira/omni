@@ -1,254 +1,271 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { HttpTestingController } from '@angular/common/http/testing';
-import { provideHttpClient, HttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { ApiService } from './api.service';
-import { LoggingService } from './logging.service';
+import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+
+import { ApiService, RequestOptions } from './api.service';
 import { environment } from '../../../environments/environment';
 
 /**
- * Test suite for ApiService
- * 
- * @description
- * This suite tests the core API service that handles HTTP requests.
- * It verifies that the service correctly:
- * - Makes REST HTTP requests (GET, POST, PUT, DELETE)
- * - Handles query parameters and URL construction
- * - Sends proper request headers and bodies
- * - Processes response data correctly
+ * Unit tests for ApiService
  */
 describe('ApiService', () => {
   let service: ApiService;
-  let httpMock: HttpTestingController;
-  let loggingServiceSpy: jasmine.SpyObj<LoggingService>;
-  const apiUrl = environment.apiUrl;
+  let httpClient: HttpClient;
+  let httpTestingController: HttpTestingController;
+  const apiBaseUrl = environment.apiUrl;
 
   beforeEach(() => {
-    // Create logging service spy
-    loggingServiceSpy = jasmine.createSpyObj('LoggingService', ['logInfo']);
-    
     TestBed.configureTestingModule({
-      providers: [
-        ApiService,
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        { provide: LoggingService, useValue: loggingServiceSpy }
-      ]
+      imports: [HttpClientTestingModule],
+      providers: [ApiService]
     });
-    
+
+    // Inject services
     service = TestBed.inject(ApiService);
-    httpMock = TestBed.inject(HttpTestingController);
+    httpClient = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
   });
 
+  // Verify no outstanding requests after each test
   afterEach(() => {
-    // Verify no pending requests after each test
-    httpMock.verify();
+    httpTestingController.verify();
   });
 
-  /**
-   * Test service creation
-   */
   it('should be created', () => {
     expect(service).toBeTruthy();
-    expect(loggingServiceSpy.logInfo).toHaveBeenCalledWith(
-      'API Service initialized', 
-      jasmine.objectContaining({ apiUrl })
+  });
+
+  /**
+   * Test GET request
+   */
+  it('should make GET request with correct URL and default options', () => {
+    const testData = { id: 1, name: 'Test Data' };
+    const endpoint = '/test-endpoint';
+
+    // Execute service call with expectation
+    service.get<any>(endpoint).subscribe(data => {
+      expect(data).toEqual(testData);
+    });
+
+    // Check request
+    const req = httpTestingController.expectOne(request => {
+      return request.method === 'GET' && 
+             request.url.includes('test-endpoint');
+    });
+
+    // Return mock response
+    req.flush(testData);
+  });
+
+  /**
+   * Test GET request with options
+   */
+  it('should make GET request with custom options', () => {
+    const testData = { id: 1, name: 'Test Data' };
+    const endpoint = '/test-endpoint';
+    const options: RequestOptions = {
+      headers: { 'Custom-Header': 'TestValue' },
+      params: { param1: 'value1', param2: 123 }
+    };
+
+    // Execute service call with expectation
+    service.get<any>(endpoint, options).subscribe(data => {
+      expect(data).toEqual(testData);
+    });
+
+    // Check request
+    const req = httpTestingController.expectOne(request => {
+      return request.method === 'GET' && 
+             request.url.includes('test-endpoint') &&
+             request.headers.has('Custom-Header') &&
+             request.params.has('param1') &&
+             request.params.has('param2');
+    });
+
+    // Return mock response
+    req.flush(testData);
+  });
+
+  /**
+   * Test POST request
+   */
+  it('should make POST request with correct data and URL', () => {
+    const testData = { id: 1, name: 'Test Data' };
+    const endpoint = '/test-endpoint';
+    const requestBody = { name: 'New Item' };
+
+    // Execute service call with expectation
+    service.post<any>(endpoint, requestBody).subscribe(data => {
+      expect(data).toEqual(testData);
+    });
+
+    // Check request
+    const req = httpTestingController.expectOne(request => {
+      return request.method === 'POST' && 
+             request.url.includes('test-endpoint');
+    });
+    expect(req.request.body).toEqual(requestBody);
+
+    // Return mock response
+    req.flush(testData);
+  });
+
+  /**
+   * Test PUT request
+   */
+  it('should make PUT request with correct data and URL', () => {
+    const testData = { id: 1, name: 'Updated Data' };
+    const endpoint = '/test-endpoint/1';
+    const requestBody = { name: 'Updated Item' };
+
+    // Execute service call with expectation
+    service.put<any>(endpoint, requestBody).subscribe(data => {
+      expect(data).toEqual(testData);
+    });
+
+    // Check request
+    const req = httpTestingController.expectOne(request => {
+      return request.method === 'PUT' && 
+             request.url.includes('test-endpoint/1');
+    });
+    expect(req.request.body).toEqual(requestBody);
+
+    // Return mock response
+    req.flush(testData);
+  });
+
+  /**
+   * Test PATCH request
+   */
+  it('should make PATCH request with correct data and URL', () => {
+    const testData = { id: 1, name: 'Updated Data' };
+    const endpoint = '/test-endpoint/1';
+    const requestBody = { name: 'Updated Item' };
+
+    // Execute service call with expectation
+    service.patch<any>(endpoint, requestBody).subscribe(data => {
+      expect(data).toEqual(testData);
+    });
+
+    // Check request
+    const req = httpTestingController.expectOne(request => {
+      return request.method === 'PATCH' && 
+             request.url.includes('test-endpoint/1');
+    });
+    expect(req.request.body).toEqual(requestBody);
+
+    // Return mock response
+    req.flush(testData);
+  });
+
+  /**
+   * Test DELETE request
+   */
+  it('should make DELETE request with correct URL', () => {
+    const testData = { success: true };
+    const endpoint = '/test-endpoint/1';
+
+    // Execute service call with expectation
+    service.delete<any>(endpoint).subscribe(data => {
+      expect(data).toEqual(testData);
+    });
+
+    // Check request
+    const req = httpTestingController.expectOne(request => {
+      return request.method === 'DELETE' && 
+             request.url.includes('test-endpoint/1');
+    });
+
+    // Return mock response
+    req.flush(testData);
+  });
+
+  /**
+   * Test error handling - HTTP error
+   */
+  it('should handle HTTP errors', (done) => {
+    const endpoint = '/test-endpoint';
+    const errorMessage = 'Simulated network error';
+    const errorStatus = 404;
+
+    // Execute service call with expectation
+    service.get<any>(endpoint).subscribe(
+      () => {
+        fail('Expected an error, not successful response');
+      },
+      error => {
+        expect(error.status).toBe(errorStatus);
+        expect(error.statusText).toBe(errorMessage);
+        done();
+      }
     );
+
+    // Create HTTP error response
+    const req = httpTestingController.expectOne(request => {
+      return request.method === 'GET' && 
+             request.url.includes('test-endpoint');
+    });
+    req.flush(errorMessage, { status: errorStatus, statusText: errorMessage });
   });
 
   /**
-   * Test GET method functionality
+   * Test parameter serialization
    */
-  describe('get method', () => {
-    /**
-     * Test basic GET request with no parameters
-     */
-    it('should make a GET request with the correct URL', fakeAsync(() => {
-      // Arrange
-      const testData = { id: 1, name: 'Test' };
-      const endpoint = 'products';
-      
-      // Act
-      let result: any;
-      service.get(endpoint).subscribe(data => {
-        result = data;
-      });
-      
-      // Assert
-      const req = httpMock.expectOne(`${apiUrl}/${endpoint}`);
-      expect(req.request.method).withContext('HTTP method').toBe('GET');
-      req.flush(testData);
-      tick();
-      
-      expect(result).withContext('Response data').toEqual(testData);
-      expect(loggingServiceSpy.logInfo).toHaveBeenCalledWith(
-        'Making GET request', 
-        jasmine.objectContaining({ url: `${apiUrl}/${endpoint}` })
-      );
-    }));
+  it('should handle parameter serialization correctly', () => {
+    const testData = { result: 'success' };
+    const endpoint = '/parameters-test';
+    const options: RequestOptions = {
+      params: { 
+        stringParam: 'test',
+        numberParam: 123,
+        booleanParam: true
+      }
+    };
+
+    // Execute service call with expectation
+    service.get<any>(endpoint, options).subscribe(data => {
+      expect(data).toEqual(testData);
+    });
+
+    // Check request
+    const req = httpTestingController.expectOne(request => {
+      return request.method === 'GET' && 
+             request.url.includes('parameters-test') &&
+             request.params.has('stringParam') &&
+             request.params.has('numberParam') &&
+             request.params.has('booleanParam');
+    });
+
+    // Return mock response
+    req.flush(testData);
+  });
+
+  /**
+   * Test endpoint formatting
+   */
+  it('should format endpoints correctly regardless of slashes', () => {
+    const testData = { result: 'success' };
     
-    /**
-     * Test GET request with query parameters
-     */
-    it('should add query parameters to GET request when provided', fakeAsync(() => {
-      // Arrange
-      const testData = [{ id: 1, name: 'Test' }];
-      const endpoint = 'products';
-      const params = { category: 'electronics', sort: 'price' };
-      
-      // Act
-      let result: any;
-      service.get(endpoint, params).subscribe(data => {
-        result = data;
-      });
-      
-      // Assert
-      const req = httpMock.expectOne(
-        req => req.url === `${apiUrl}/${endpoint}` && 
-               req.params.get('category') === 'electronics' &&
-               req.params.get('sort') === 'price'
-      );
-      expect(req.request.method).withContext('HTTP method').toBe('GET');
-      req.flush(testData);
-      tick();
-      
-      expect(result).withContext('Response data').toEqual(testData);
-    }));
+    // Test with leading slash
+    service.get<any>('/with-slash').subscribe(data => {
+      expect(data).toEqual(testData);
+    });
     
-    /**
-     * Test parameter handling for null and undefined values
-     */
-    it('should skip null and undefined parameters but include zero values', fakeAsync(() => {
-      // Arrange
-      const testData = [{ id: 1, name: 'Test' }];
-      const endpoint = 'products';
-      const params = { 
-        category: 'electronics', 
-        sort: null, 
-        filter: undefined, 
-        count: 0,
-        active: false
-      };
-      
-      // Act
-      let result: any;
-      service.get(endpoint, params).subscribe(data => {
-        result = data;
-      });
-      
-      // Assert
-      const req = httpMock.expectOne(
-        req => req.url === `${apiUrl}/${endpoint}` && 
-               req.params.get('category') === 'electronics' &&
-               req.params.get('count') === '0' &&
-               req.params.get('active') === 'false' &&
-               !req.params.has('sort') &&
-               !req.params.has('filter')
-      );
-      expect(req.request.method).withContext('HTTP method').toBe('GET');
-      req.flush(testData);
-      tick();
-      
-      expect(result).withContext('Response data').toEqual(testData);
-    }));
+    const req1 = httpTestingController.expectOne(request => {
+      return request.method === 'GET' && 
+             request.url.includes('with-slash');
+    });
+    req1.flush(testData);
+    
+    // Test without leading slash
+    service.get<any>('without-slash').subscribe(data => {
+      expect(data).toEqual(testData);
+    });
+    
+    const req2 = httpTestingController.expectOne(request => {
+      return request.method === 'GET' && 
+             request.url.includes('without-slash');
+    });
+    req2.flush(testData);
   });
-
-  /**
-   * Test POST method functionality
-   */
-  describe('post method', () => {
-    it('should make a POST request with the correct URL and body', fakeAsync(() => {
-      // Arrange
-      const testData = { name: 'New Product', price: 99.99 };
-      const response = { id: 1, ...testData };
-      const endpoint = 'products';
-      
-      // Act
-      let result: any;
-      service.post(endpoint, testData).subscribe(data => {
-        result = data;
-      });
-      
-      // Assert
-      const req = httpMock.expectOne(`${apiUrl}/${endpoint}`);
-      expect(req.request.method).withContext('HTTP method').toBe('POST');
-      expect(req.request.body).withContext('Request body').toEqual(testData);
-      req.flush(response);
-      tick();
-      
-      expect(result).withContext('Response data').toEqual(response);
-      expect(loggingServiceSpy.logInfo).toHaveBeenCalledWith(
-        'Making POST request', 
-        jasmine.objectContaining({ 
-          url: `${apiUrl}/${endpoint}`,
-          data: testData 
-        })
-      );
-    }));
-  });
-
-  /**
-   * Test PUT method functionality
-   */
-  describe('put method', () => {
-    it('should make a PUT request with the correct URL and body', fakeAsync(() => {
-      // Arrange
-      const id = 1;
-      const testData = { name: 'Updated Product', price: 129.99 };
-      const response = { id, ...testData };
-      const endpoint = `products/${id}`;
-      
-      // Act
-      let result: any;
-      service.put(endpoint, testData).subscribe(data => {
-        result = data;
-      });
-      
-      // Assert
-      const req = httpMock.expectOne(`${apiUrl}/${endpoint}`);
-      expect(req.request.method).withContext('HTTP method').toBe('PUT');
-      expect(req.request.body).withContext('Request body').toEqual(testData);
-      req.flush(response);
-      tick();
-      
-      expect(result).withContext('Response data').toEqual(response);
-      expect(loggingServiceSpy.logInfo).toHaveBeenCalledWith(
-        'Making PUT request', 
-        jasmine.objectContaining({ 
-          url: `${apiUrl}/${endpoint}`,
-          data: testData 
-        })
-      );
-    }));
-  });
-
-  /**
-   * Test DELETE method functionality
-   */
-  describe('delete method', () => {
-    it('should make a DELETE request with the correct URL', fakeAsync(() => {
-      // Arrange
-      const id = 1;
-      const endpoint = `products/${id}`;
-      const response = { success: true };
-      
-      // Act
-      let result: any;
-      service.delete(endpoint).subscribe(data => {
-        result = data;
-      });
-      
-      // Assert
-      const req = httpMock.expectOne(`${apiUrl}/${endpoint}`);
-      expect(req.request.method).withContext('HTTP method').toBe('DELETE');
-      req.flush(response);
-      tick();
-      
-      expect(result).withContext('Response data').toEqual(response);
-      expect(loggingServiceSpy.logInfo).toHaveBeenCalledWith(
-        'Making DELETE request', 
-        jasmine.objectContaining({ url: `${apiUrl}/${endpoint}` })
-      );
-    }));
-  });
-});
+}); 

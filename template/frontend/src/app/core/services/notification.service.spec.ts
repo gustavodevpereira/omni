@@ -1,152 +1,217 @@
 import { TestBed } from '@angular/core/testing';
-import { NotificationService } from './notification.service';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
+import { NotificationService, NotificationType } from './notification.service';
+
 /**
- * Test suite for NotificationService
- * 
- * @description
- * Tests the notification service that provides user feedback through snackbars.
- * This suite verifies that:
- * - Different notification types (success, error, info, warning) display correctly
- * - Notification durations are configurable
- * - Default configurations are applied correctly
+ * Unit tests for NotificationService
  */
 describe('NotificationService', () => {
   let service: NotificationService;
-  let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
+  let snackBarMock: jasmine.SpyObj<MatSnackBar>;
+  let snackBarRefMock: jasmine.SpyObj<MatSnackBarRef<any>>;
 
   beforeEach(() => {
-    // Create spy for MatSnackBar
-    snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
-    
+    // Create spy object for the MatSnackBar
+    snackBarRefMock = jasmine.createSpyObj('MatSnackBarRef', ['dismiss']);
+    snackBarMock = jasmine.createSpyObj('MatSnackBar', ['open']);
+    snackBarMock.open.and.returnValue(snackBarRefMock);
+
     TestBed.configureTestingModule({
+      imports: [
+        NoopAnimationsModule
+      ],
       providers: [
         NotificationService,
-        { provide: MatSnackBar, useValue: snackBarSpy }
+        { provide: MatSnackBar, useValue: snackBarMock }
       ]
     });
-    
+
     service = TestBed.inject(NotificationService);
   });
 
-  /**
-   * Test service creation
-   */
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
   /**
-   * Test success notification functionality
+   * Test success notification
    */
-  describe('success notification', () => {
-    it('should open a snackbar with success styling', () => {
-      // Arrange
-      const message = 'Operation successful';
-      
-      // Act
-      service.success(message);
-      
-      // Assert
-      expect(snackBarSpy.open).toHaveBeenCalledWith(
-        message,
-        'Close',
-        jasmine.objectContaining({
-          duration: 3000,
-          horizontalPosition: 'end',
-          verticalPosition: 'top',
-          panelClass: ['success-snackbar']
-        })
-      );
-    });
-
-    it('should respect custom duration', () => {
-      // Arrange
-      const message = 'Operation successful';
-      const customDuration = 1500;
-      
-      // Act
-      service.success(message, customDuration);
-      
-      // Assert
-      expect(snackBarSpy.open).toHaveBeenCalledWith(
-        message,
-        'Close',
-        jasmine.objectContaining({
-          duration: customDuration
-        })
-      );
-    });
+  it('should display success notification', () => {
+    const message = 'Success message';
+    const action = 'OK';
+    
+    service.success(message, action);
+    
+    expect(snackBarMock.open).toHaveBeenCalledWith(
+      message, 
+      action, 
+      jasmine.objectContaining({ 
+        panelClass: ['notification-success']
+      })
+    );
   });
 
   /**
-   * Test error notification functionality
+   * Test error notification
    */
-  describe('error notification', () => {
-    it('should open a snackbar with error styling', () => {
-      // Arrange
-      const message = 'Operation failed';
-      
-      // Act
-      service.error(message);
-      
-      // Assert
-      expect(snackBarSpy.open).toHaveBeenCalledWith(
-        message,
-        'Close',
-        jasmine.objectContaining({
-          duration: 5000, // Longer duration for errors
-          panelClass: ['error-snackbar']
-        })
-      );
-    });
+  it('should display error notification', () => {
+    const message = 'Error message';
+    
+    service.error(message);
+    
+    expect(snackBarMock.open).toHaveBeenCalledWith(
+      message, 
+      'Close', 
+      jasmine.objectContaining({ 
+        panelClass: ['notification-error']
+      })
+    );
   });
 
   /**
-   * Test info notification functionality
+   * Test info notification
    */
-  describe('info notification', () => {
-    it('should open a snackbar with info styling', () => {
-      // Arrange
-      const message = 'Operation in progress';
-      
-      // Act
-      service.info(message);
-      
-      // Assert
-      expect(snackBarSpy.open).toHaveBeenCalledWith(
-        message,
-        'Close',
-        jasmine.objectContaining({
-          duration: 3000,
-          panelClass: ['info-snackbar']
-        })
-      );
-    });
+  it('should display info notification', () => {
+    const message = 'Info message';
+    
+    service.info(message);
+    
+    expect(snackBarMock.open).toHaveBeenCalledWith(
+      message, 
+      'Close', 
+      jasmine.objectContaining({ 
+        panelClass: ['notification-info']
+      })
+    );
   });
 
   /**
-   * Test warning notification functionality
+   * Test warning notification
    */
-  describe('warning notification', () => {
-    it('should open a snackbar with warning styling', () => {
-      // Arrange
-      const message = 'Proceed with caution';
-      
-      // Act
-      service.warning(message);
-      
-      // Assert
-      expect(snackBarSpy.open).toHaveBeenCalledWith(
-        message,
-        'Close',
-        jasmine.objectContaining({
-          duration: 4000,
-          panelClass: ['warning-snackbar']
-        })
-      );
-    });
+  it('should display warning notification', () => {
+    const message = 'Warning message';
+    
+    service.warning(message);
+    
+    expect(snackBarMock.open).toHaveBeenCalledWith(
+      message, 
+      'Close', 
+      jasmine.objectContaining({ 
+        panelClass: ['notification-warning']
+      })
+    );
   });
-});
+
+  /**
+   * Test notify method with different notification types
+   */
+  it('should handle different notification types with notify method', () => {
+    const message = 'Test message';
+    
+    // Test each notification type
+    service.notify(message, NotificationType.SUCCESS);
+    expect(snackBarMock.open).toHaveBeenCalledWith(
+      message, 
+      'Close', 
+      jasmine.objectContaining({ 
+        panelClass: ['notification-success']
+      })
+    );
+    
+    service.notify(message, NotificationType.ERROR);
+    expect(snackBarMock.open).toHaveBeenCalledWith(
+      message, 
+      'Close', 
+      jasmine.objectContaining({ 
+        panelClass: ['notification-error']
+      })
+    );
+    
+    service.notify(message, NotificationType.INFO);
+    expect(snackBarMock.open).toHaveBeenCalledWith(
+      message, 
+      'Close', 
+      jasmine.objectContaining({ 
+        panelClass: ['notification-info']
+      })
+    );
+    
+    service.notify(message, NotificationType.WARNING);
+    expect(snackBarMock.open).toHaveBeenCalledWith(
+      message, 
+      'Close', 
+      jasmine.objectContaining({ 
+        panelClass: ['notification-warning']
+      })
+    );
+  });
+
+  /**
+   * Test dismiss method
+   */
+  it('should dismiss active notification', () => {
+    // First, show a notification to create an active reference
+    service.info('Test message');
+    
+    // Then dismiss it
+    service.dismiss();
+    
+    // Verify dismiss was called on the reference
+    expect(snackBarRefMock.dismiss).toHaveBeenCalled();
+  });
+
+  /**
+   * Test dismiss with no active notification
+   */
+  it('should not throw error when dismissing with no active notification', () => {
+    // Manually set the internal property to null
+    // This is a bit of a hack, but it's the most straightforward way to test this scenario
+    (service as any).activeSnackBarRef = null;
+    
+    // This should not throw an error
+    expect(() => service.dismiss()).not.toThrow();
+  });
+
+  /**
+   * Test custom configuration
+   */
+  it('should accept custom configuration', () => {
+    const message = 'Custom config message';
+    const customConfig = {
+      duration: 10000,
+      horizontalPosition: 'start' as const
+    };
+    
+    service.success(message, 'Close', customConfig);
+    
+    expect(snackBarMock.open).toHaveBeenCalledWith(
+      message, 
+      'Close', 
+      jasmine.objectContaining({ 
+        duration: 10000,
+        horizontalPosition: 'start',
+        panelClass: ['notification-success']
+      })
+    );
+  });
+
+  /**
+   * Test that new notification dismisses previous one
+   */
+  it('should dismiss previous notification when showing a new one', () => {
+    // Show first notification
+    service.info('First message');
+    
+    // Reset call count for clearer assertions
+    snackBarRefMock.dismiss.calls.reset();
+    
+    // Show second notification
+    service.info('Second message');
+    
+    // Verify dismiss was called before showing the second notification
+    expect(snackBarRefMock.dismiss).toHaveBeenCalled();
+    expect(snackBarMock.open).toHaveBeenCalledTimes(2);
+  });
+}); 

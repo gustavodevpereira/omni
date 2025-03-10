@@ -1,83 +1,82 @@
 import { TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { HttpTestingController } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
-import { provideRouter } from '@angular/router';
-import { take } from 'rxjs/operators';
+import { of, throwError } from 'rxjs';
 
 import { AuthService } from './auth.service';
-import { LoggingService } from './logging.service';
-import { NotificationService } from './notification.service';
-import { environment } from '../../../environments/environment';
-import { User, UserRole, AuthRequest, AuthResponse } from '../../shared/models/user.model';
-import { ApiResponseWithData } from '../../shared/models/api-response.models';
+import { AuthApiService } from '../api/services/auth-api.service';
+import { AuthRequests } from '../api/models/requests.model';
+import { AuthResponses } from '../api/models/responses.model';
+import { UserRole, UserStatus } from '../api/models/domain.model';
 
 /**
- * Test suite for AuthService
- * 
- * @description
- * Tests the authentication service that handles user login/logout, session management,
- * and user operations. This tests the proper behavior of token handling, user object
- * management, and API interactions.
+ * Unit tests for AuthService
  */
 describe('AuthService', () => {
   let service: AuthService;
-  let httpMock: HttpTestingController;
-  let routerSpy: jasmine.SpyObj<Router>;
-  let loggingServiceSpy: jasmine.SpyObj<LoggingService>;
-  let notificationServiceSpy: jasmine.SpyObj<NotificationService>;
-  const apiUrl = environment.apiUrl;
+  let authApiServiceMock: jasmine.SpyObj<AuthApiService>;
+  let routerMock: jasmine.SpyObj<Router>;
+  
+  // Mock data
+  const mockAuthResult: AuthResponses.AuthResult = {
+    token: 'test-jwt-token',
+    email: 'test@example.com',
+    name: 'Test User',
+    role: 'Customer'
+  };
+  
+  const mockLoginData: AuthRequests.Login = {
+    email: 'test@example.com',
+    password: 'password123',
+    rememberMe: true
+  };
+  
+  const mockRegisterData: AuthRequests.Register = {
+    email: 'test@example.com',
+    password: 'password123',
+    name: 'Test User',
+    confirmPassword: 'password123',
+    phone: '1234567890'
+  };
 
-  // Storage mock to simulate localStorage behavior
-  let storedItems: {[key: string]: string} = {};
-
+  // Mock localStorage
+  let localStorageMock: { [key: string]: string } = {};
+  
   beforeEach(() => {
     // Reset storage mock
-    storedItems = {};
+    localStorageMock = {};
     
-    // Setup spies
-    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-    loggingServiceSpy = jasmine.createSpyObj('LoggingService', ['logInfo', 'logError', 'logWarning']);
-    notificationServiceSpy = jasmine.createSpyObj('NotificationService', ['success', 'error', 'info', 'warning']);
+    // Create localStorage mock
+    spyOn(localStorage, 'getItem').and.callFake((key) => localStorageMock[key] || null);
+    spyOn(localStorage, 'setItem').and.callFake((key, value) => localStorageMock[key] = value);
+    spyOn(localStorage, 'removeItem').and.callFake((key) => delete localStorageMock[key]);
     
-    // Setup localStorage spy implementation with a mock storage
-    spyOn(localStorage, 'setItem').and.callFake((key, value) => {
-      storedItems[key] = value;
-    });
+    // Create service mocks
+    authApiServiceMock = jasmine.createSpyObj('AuthApiService', [
+      'login', 
+      'register', 
+      'forgotPassword', 
+      'resetPassword'
+    ]);
     
-    spyOn(localStorage, 'getItem').and.callFake((key) => {
-      return storedItems[key] || null;
-    });
+    routerMock = jasmine.createSpyObj('Router', ['navigate']);
     
-    spyOn(localStorage, 'removeItem').and.callFake((key) => {
-      delete storedItems[key];
-    });
-    
+    // Set up default mock returns
+    authApiServiceMock.login.and.returnValue(of(mockAuthResult));
+    authApiServiceMock.register.and.returnValue(of(mockAuthResult));
+    authApiServiceMock.forgotPassword.and.returnValue(of('Reset link sent'));
+    authApiServiceMock.resetPassword.and.returnValue(of('Password reset successful'));
+
     TestBed.configureTestingModule({
       providers: [
         AuthService,
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideRouter([]),
-        { provide: Router, useValue: routerSpy },
-        { provide: LoggingService, useValue: loggingServiceSpy },
-        { provide: NotificationService, useValue: notificationServiceSpy }
+        { provide: AuthApiService, useValue: authApiServiceMock },
+        { provide: Router, useValue: routerMock }
       ]
     });
-    
+
     service = TestBed.inject(AuthService);
-    httpMock = TestBed.inject(HttpTestingController);
   });
 
-  afterEach(() => {
-    // Verify no pending requests
-    httpMock.verify();
-  });
-
-  /**
-   * Test service creation
-   */
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
@@ -85,228 +84,265 @@ describe('AuthService', () => {
   /**
    * Test login functionality
    */
-  describe('login', () => {
-    it('should authenticate user and store token and user data', () => {
-      // Arrange
-      const credentials: AuthRequest = {
-        email: 'test@example.com',
-        password: 'password123'
-      };
+  it('should login successfully', (done) => {
+    service.login(mockLoginData.email, mockLoginData.password, mockLoginData.rememberMe).subscribe(user => {
+      // Verify user data from API is returned
+      expect(user).toBeTruthy();
+      expect(user.email).toEqual(mockAuthResult.email);
+      expect(user.name).toEqual(mockAuthResult.name);
+      expect(user.role).toEqual(mockAuthResult.role as UserRole);
       
-      const authResponse: AuthResponse = {
-        token: 'test-token',
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'customer'
-      };
-      
-      const apiResponse: ApiResponseWithData<AuthResponse> = {
-        success: true,
-        message: 'Authentication successful',
-        data: authResponse,
-        errors: []
-      };
-      
-      // Act
-      service.login(credentials).pipe(take(1)).subscribe(response => {
-        // Assert
-        expect(response).toEqual(apiResponse);
-        expect(localStorage.setItem).toHaveBeenCalledWith('auth_token', authResponse.token);
+      // Verify authentication state is updated
+      service.isAuthenticated$.subscribe(isAuth => {
+        expect(isAuth).toBeTrue();
+        
+        // Verify token is stored in localStorage
+        expect(localStorage.setItem).toHaveBeenCalledWith('auth_token', mockAuthResult.token);
+        expect(localStorage.setItem).toHaveBeenCalledWith('current_user', jasmine.any(String));
+        
+        done();
       });
-      
-      // Expect request and mock response
-      const req = httpMock.expectOne(`${apiUrl}/auth`);
-      expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual(credentials);
-      req.flush(apiResponse);
     });
+    
+    // Verify API was called with correct data
+    expect(authApiServiceMock.login).toHaveBeenCalledWith(mockLoginData);
   });
 
   /**
-   * Test logout functionality
+   * Test login error handling
    */
-  describe('logout', () => {
-    it('should clear token, user data and navigate to login page', () => {
-      // Act
-      service.logout();
-      
-      // Assert
-      expect(localStorage.removeItem).toHaveBeenCalledWith('auth_token');
-      expect(localStorage.removeItem).toHaveBeenCalledWith('user_data');
-      expect(routerSpy.navigate).toHaveBeenCalledWith(['/auth/login']);
-      expect(notificationServiceSpy.info).toHaveBeenCalled();
-    });
-  });
-
-  /**
-   * Test isLoggedIn functionality
-   */
-  describe('isLoggedIn', () => {
-    it('should return true when token exists', () => {
-      // Arrange
-      storedItems['auth_token'] = 'test-token';
-      
-      // Act & Assert
-      expect(service.isLoggedIn()).toBeTrue();
-    });
-
-    it('should return false when token does not exist', () => {
-      // Arrange - token is not set
-      
-      // Act & Assert
-      expect(service.isLoggedIn()).toBeFalse();
-    });
+  it('should handle login errors', (done) => {
+    // Set up API to return error
+    const errorMsg = 'Invalid credentials';
+    authApiServiceMock.login.and.returnValue(throwError(() => new Error(errorMsg)));
+    
+    service.login(mockLoginData.email, mockLoginData.password).subscribe(
+      () => {
+        fail('Should have failed with error');
+      },
+      (error) => {
+        expect(error).toBeTruthy();
+        expect(error.message).toEqual(errorMsg);
+        
+        // Verify authentication state is not updated
+        service.isAuthenticated$.subscribe(isAuth => {
+          expect(isAuth).toBeFalse();
+          expect(localStorage.setItem).not.toHaveBeenCalledWith('auth_token', jasmine.any(String));
+          done();
+        });
+      }
+    );
   });
 
   /**
    * Test register functionality
    */
-  describe('register', () => {
-    it('should register a new user', () => {
-      // Arrange
-      const registerData = {
-        username: 'testuser',
-        email: 'test@example.com',
-        password: 'password123'
-      };
+  it('should register successfully', (done) => {
+    service.register(mockRegisterData).subscribe(user => {
+      // Verify user data from API is returned
+      expect(user).toBeTruthy();
+      expect(user.email).toEqual(mockAuthResult.email);
+      expect(user.name).toEqual(mockAuthResult.name);
       
-      const userDTO = {
-        id: '1',
-        email: registerData.email,
-        name: registerData.username,
-        role: UserRole.CUSTOMER
-      };
-      
-      const apiResponse: ApiResponseWithData<typeof userDTO> = {
-        success: true,
-        message: 'User registered successfully',
-        data: userDTO,
-        errors: []
-      };
-      
-      // Act
-      service.register(registerData).pipe(take(1)).subscribe(response => {
-        // Assert
-        expect(response).toEqual(apiResponse);
-        expect(notificationServiceSpy.success).toHaveBeenCalled();
+      // Verify authentication state is updated
+      service.isAuthenticated$.subscribe(isAuth => {
+        expect(isAuth).toBeTrue();
+        
+        // Verify token is stored
+        expect(localStorage.setItem).toHaveBeenCalledWith('auth_token', mockAuthResult.token);
+        expect(localStorage.setItem).toHaveBeenCalledWith('current_user', jasmine.any(String));
+        
+        done();
       });
-      
-      // Expect request and mock response
-      const req = httpMock.expectOne(`${apiUrl}/users`);
-      expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual(registerData);
-      req.flush(apiResponse);
     });
+    
+    // Verify API was called with correct data
+    expect(authApiServiceMock.register).toHaveBeenCalledWith(mockRegisterData);
   });
 
   /**
-   * Test token management
+   * Test register error handling
    */
-  describe('token management', () => {
-    it('should retrieve token from localStorage', () => {
-      // Arrange
-      const token = 'test-token';
-      storedItems['auth_token'] = token;
-      
-      // Act
-      const result = service.getToken();
-      
-      // Assert
-      expect(result).toBe(token);
-      expect(localStorage.getItem).toHaveBeenCalledWith('auth_token');
-    });
+  it('should handle register errors', (done) => {
+    // Set up API to return error
+    const errorMsg = 'Email already in use';
+    authApiServiceMock.register.and.returnValue(throwError(() => new Error(errorMsg)));
+    
+    service.register(mockRegisterData).subscribe(
+      () => {
+        fail('Should have failed with error');
+      },
+      (error) => {
+        expect(error).toBeTruthy();
+        expect(error.message).toEqual(errorMsg);
+        
+        // Verify authentication state is not updated
+        service.isAuthenticated$.subscribe(isAuth => {
+          expect(isAuth).toBeFalse();
+          expect(localStorage.setItem).not.toHaveBeenCalledWith('auth_token', jasmine.any(String));
+          done();
+        });
+      }
+    );
   });
 
   /**
-   * Test user management
+   * Test logout functionality
    */
-  describe('user management', () => {
-    it('should get user profile', () => {
-      // Arrange
-      const userId = '1';
-      const userDTO = {
-        id: userId,
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'customer'
-      };
-      
-      const apiResponse: ApiResponseWithData<typeof userDTO> = {
-        success: true,
-        message: 'User found',
-        data: userDTO,
-        errors: []
-      };
-      
-      // Act
-      service.getUserById(userId).pipe(take(1)).subscribe(response => {
-        // Assert
-        expect(response).toEqual(apiResponse);
-      });
-      
-      // Expect request and mock response
-      const req = httpMock.expectOne(`${apiUrl}/users/${userId}`);
-      expect(req.request.method).toBe('GET');
-      req.flush(apiResponse);
+  it('should logout correctly', () => {
+    // First set authenticated state
+    localStorageMock['auth_token'] = 'test-token';
+    localStorageMock['current_user'] = JSON.stringify({
+      email: 'test@example.com',
+      name: 'Test User',
+      role: UserRole.Customer,
+      status: UserStatus.Active
     });
-
-    it('should update user profile', () => {
-      // Arrange
-      const userId = '1';
-      const updateData = { name: 'Updated Name' };
-      
-      const userDTO = {
-        id: userId,
-        email: 'test@example.com',
-        name: updateData.name,
-        role: 'customer'
-      };
-      
-      const apiResponse: ApiResponseWithData<typeof userDTO> = {
-        success: true,
-        message: 'User updated',
-        data: userDTO,
-        errors: []
-      };
-      
-      // Act
-      service.updateUser(userId, updateData).pipe(take(1)).subscribe(response => {
-        // Assert
-        expect(response).toEqual(apiResponse);
-        expect(notificationServiceSpy.success).toHaveBeenCalled();
-      });
-      
-      // Expect request and mock response
-      const req = httpMock.expectOne(`${apiUrl}/users/${userId}`);
-      expect(req.request.method).toBe('PUT');
-      expect(req.request.body).toEqual(updateData);
-      req.flush(apiResponse);
+    
+    // Call the method being tested
+    service.logout();
+    
+    // Verify localStorage items are removed
+    expect(localStorage.removeItem).toHaveBeenCalledWith('auth_token');
+    expect(localStorage.removeItem).toHaveBeenCalledWith('current_user');
+    
+    // Verify authentication state is updated
+    service.isAuthenticated$.subscribe(isAuth => {
+      expect(isAuth).toBeFalse();
     });
-
-    it('should delete user account', () => {
-      // Arrange
-      const userId = '1';
-      
-      const apiResponse: ApiResponseWithData<null> = {
-        success: true,
-        message: 'User deleted',
-        data: null,
-        errors: []
-      };
-      
-      // Act
-      service.deleteUser(userId).pipe(take(1)).subscribe(response => {
-        // Assert
-        expect(response).toEqual(apiResponse);
-        expect(notificationServiceSpy.success).toHaveBeenCalled();
-      });
-      
-      // Expect request and mock response
-      const req = httpMock.expectOne(`${apiUrl}/users/${userId}`);
-      expect(req.request.method).toBe('DELETE');
-      req.flush(apiResponse);
-    });
+    
+    // Verify redirection to login page
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/auth/login']);
   });
-});
 
+  /**
+   * Test getCurrentUser method
+   */
+  it('should return current user', () => {
+    // Initialize with mock user
+    (service as any).currentUserSubject.next({
+      id: '123',
+      email: 'test@example.com',
+      name: 'Test User',
+      phone: '',
+      role: UserRole.Customer,
+      status: UserStatus.Active
+    });
+    
+    const user = service.getCurrentUser();
+    expect(user).toBeTruthy();
+    expect(user?.email).toEqual('test@example.com');
+    expect(user?.name).toEqual('Test User');
+  });
 
+  /**
+   * Test isAuthenticated method
+   */
+  it('should return authentication state', () => {
+    // Initially not authenticated
+    expect(service.isAuthenticated()).toBeFalse();
+    
+    // Set authenticated
+    (service as any).isAuthenticatedSubject.next(true);
+    
+    // Should now return true
+    expect(service.isAuthenticated()).toBeTrue();
+  });
+
+  /**
+   * Test loading from localStorage on initialization
+   */
+  it('should load user state from localStorage on init', () => {
+    // Setup existing data in localStorage
+    const mockStoredUser = {
+      id: 'stored-id',
+      email: 'stored@example.com',
+      name: 'Stored User',
+      phone: '',
+      role: UserRole.Customer,
+      status: UserStatus.Active
+    };
+    
+    localStorageMock['auth_token'] = 'stored-token';
+    localStorageMock['current_user'] = JSON.stringify(mockStoredUser);
+    
+    // Create a new instance which will check localStorage in constructor
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        AuthService,
+        { provide: AuthApiService, useValue: authApiServiceMock },
+        { provide: Router, useValue: routerMock }
+      ]
+    });
+    
+    const newService = TestBed.inject(AuthService);
+    
+    // Verify the service loaded the user from localStorage
+    expect(newService.isAuthenticated()).toBeTrue();
+    expect(newService.getCurrentUser()).toEqual(mockStoredUser);
+  });
+
+  /**
+   * Test forgot password functionality
+   */
+  it('should request password reset', (done) => {
+    const email = 'reset@example.com';
+    const expectedMessage = 'Reset link sent';
+    
+    service.forgotPassword(email).subscribe(message => {
+      expect(message).toEqual(expectedMessage);
+      done();
+    });
+    
+    expect(authApiServiceMock.forgotPassword).toHaveBeenCalledWith({ email });
+  });
+
+  /**
+   * Test reset password functionality
+   */
+  it('should reset password', (done) => {
+    const resetData = {
+      token: 'reset-token',
+      password: 'new-password',
+      confirmPassword: 'new-password'
+    };
+    const expectedMessage = 'Password reset successful';
+    
+    service.resetPassword(resetData.token, resetData.password, resetData.confirmPassword).subscribe(message => {
+      expect(message).toEqual(expectedMessage);
+      done();
+    });
+    
+    expect(authApiServiceMock.resetPassword).toHaveBeenCalledWith(resetData);
+  });
+
+  /**
+   * Test handling of invalid localStorage data
+   */
+  it('should handle invalid localStorage data', () => {
+    // Set invalid data in localStorage
+    localStorageMock['auth_token'] = 'valid-token';
+    localStorageMock['current_user'] = 'not-valid-json';
+    
+    // Create a new instance which will check localStorage in constructor
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        AuthService,
+        { provide: AuthApiService, useValue: authApiServiceMock },
+        { provide: Router, useValue: routerMock }
+      ]
+    });
+    
+    const newService = TestBed.inject(AuthService);
+    
+    // Verify the service handled the error and is not authenticated
+    expect(newService.isAuthenticated()).toBeFalse();
+    expect(newService.getCurrentUser()).toBeNull();
+    
+    // localStorage should be cleared
+    expect(localStorage.removeItem).toHaveBeenCalledWith('auth_token');
+    expect(localStorage.removeItem).toHaveBeenCalledWith('current_user');
+  });
+}); 
