@@ -1,10 +1,24 @@
 version: '3.8'
 
 services:
+  # Frontend service
+  frontend:
+    container_name: ambev.developerevaluation.frontend
+    build:
+      context: ./template/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    networks:
+      - ambev_network
+    depends_on:
+      - webapi
+
+  # Backend services
   webapi:
     container_name: ambev.developerevaluation.webapi
     build:
-      context: .
+      context: ./template/backend
       dockerfile: Dockerfile
     ports:
       - "8080:8080"

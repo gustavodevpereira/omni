@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   frontend:
-    container_name: ambev_frontend
+    container_name: ambev.developerevaluation.frontend
     build:
       context: .
       dockerfile: Dockerfile
@@ -10,5 +10,90 @@ services:
       - "4200:80"
     volumes:
       - ./src:/app/src  # Para desenvolvimento, observa alterações
-    extra_hosts:
-      - "host.docker.internal:host-gateway"  # Para acessar localhost da máquina host 
+    networks:
+      - ambev_network
+    depends_on:
+      - webapi
+
+  # Inclua o backend e seus serviços para garantir que tudo esteja na mesma rede
+  webapi:
+    container_name: ambev.developerevaluation.webapi
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_URLS=http://+:8080;https://+:8081
+    depends_on:
+      - database
+      - nosql
+      - cache
+      - messagebroker
+    networks:
+      - ambev_network
+
+  database:
+    container_name: ambev.developerevaluation.database
+    image: postgres:13
+    environment:
+      POSTGRES_DB: developer_evaluation
+      POSTGRES_USER: developer
+      POSTGRES_PASSWORD: ev@luAt10n
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ambev_network
+
+  nosql:
+    container_name: ambev.developerevaluation.nosql 
+    image: mongo:8.0    
+    environment:
+        MONGO_INITDB_ROOT_USERNAME: developer
+        MONGO_INITDB_ROOT_PASSWORD: ev@luAt10n
+    ports:
+      - "27017:27017"
+    networks:
+      - ambev_network
+
+  cache:
+    container_name: ambev.developerevaluation.cache
+    image: redis:7.4.1-alpine
+    command: redis-server --requirepass ev@luAt10n
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ambev_network
+
+  messagebroker:
+    container_name: ambev.developerevaluation.messagebroker
+    image: rabbitmq:3.12-management
+    hostname: ambev.developerevaluation.messagebroker
+    environment:
+      RABBITMQ_DEFAULT_USER: developer
+      RABBITMQ_DEFAULT_PASS: ev@luAt10n
+      RABBITMQ_DEFAULT_VHOST: /
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - ambev_network
+
+networks:
+  ambev_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data: 
