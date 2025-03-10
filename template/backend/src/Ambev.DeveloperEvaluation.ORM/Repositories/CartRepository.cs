@@ -29,53 +29,28 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             return cart;
         }
 
-        /// <summary>
-        /// Gets a cart by its ID
-        /// </summary>
-        public async Task<Cart?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        {
-            return await _context.Carts
-                .Include(s => s.Products)
-                .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
-        }
 
         /// <summary>
-        /// Gets all cart
+        /// Gets paged carts for a specific customer
         /// </summary>
-        public async Task<IEnumerable<Cart>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Cart>> GetAllPagedByCustomerAsync(Guid customerId, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
         {
             return await _context.Carts
                 .Include(s => s.Products)
-                .ToListAsync(cancellationToken);
-        }
-
-        /// <summary>
-        /// Gets paged cart
-        /// </summary>
-        public async Task<IEnumerable<Cart>> GetAllPagedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
-        {
-            return await _context.Carts
-                .Include(s => s.Products)
+                .Where(c => c.CustomerExternalId == customerId)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);
         }
 
         /// <summary>
-        /// Gets the total count of cart
+        /// Gets the total count of carts for a specific customer
         /// </summary>
-        public async Task<int> CountAsync(CancellationToken cancellationToken = default)
+        public async Task<int> CountByCustomerAsync(Guid customerId, CancellationToken cancellationToken = default)
         {
-            return await _context.Carts.CountAsync(cancellationToken);
-        }
-
-        /// <summary>
-        /// Updates a cart
-        /// </summary>
-        public async Task<Cart> UpdateAsync(Cart cart, CancellationToken cancellationToken = default)
-        {
-            _context.Entry(cart).State = EntityState.Modified;
-            return cart;
+            return await _context.Carts
+                .Where(c => c.CustomerExternalId == customerId)
+                .CountAsync(cancellationToken);
         }
     }
 }

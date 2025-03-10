@@ -44,6 +44,13 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .IsRequired()
             .HasMaxLength(50);
 
+        builder.Property(p => p.BranchExternalId)
+            .IsRequired();
+
+        builder.Property(p => p.BranchName)
+            .IsRequired()
+            .HasMaxLength(100);
+
         builder.Property(p => p.Status)
             .IsRequired();
 
