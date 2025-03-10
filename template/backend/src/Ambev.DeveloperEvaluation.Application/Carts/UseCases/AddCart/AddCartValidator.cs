@@ -11,12 +11,8 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.UseCases.AddCart
                 .NotEmpty()
                 .WithMessage("Customer ID is required");
 
-            RuleFor(x => x.CostumerName)
-                .NotEmpty()
-                .WithMessage("Customer name is required")
-                .MaximumLength(100)
-                .WithMessage("Customer name cannot exceed 100 characters");
-
+            // Customer details now fetched from repository based on CostumerId
+            
             RuleFor(x => x.BranchId)
                 .NotEmpty()
                 .WithMessage("Branch ID is required");

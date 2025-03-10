@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Collections.Generic;
+using Ambev.DeveloperEvaluation.Common.Validation;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Common;
 
@@ -25,12 +27,30 @@ public class BaseController : ControllerBase
     protected IActionResult NotFound(string message = "Resource not found") =>
         base.NotFound(new ApiResponse { Message = message, Success = false });
 
-    protected IActionResult OkPaginated<T>(List<T> items, int count, int pageNumber, int pageSize) =>
-            Ok(new PaginatedList<T>
-            (
-                items: items,
-                count: count,
-                pageNumber: pageNumber,
-                pageSize: pageSize
-            ));
+    protected IActionResult OkPaginated<T>(PaginatedList<T> pagedList) =>
+            base.Ok(new PaginatedResponse<T>
+            {
+                Data = pagedList,
+                CurrentPage = pagedList.CurrentPage,
+                TotalPages = pagedList.TotalPages,
+                TotalCount = pagedList.TotalCount,
+                Success = true
+            });
+
+    protected IActionResult CreatedAtAction<T>(string actionName, object routeValues, T data) =>
+        base.CreatedAtAction(actionName, routeValues, new ApiResponseWithData<T> { Data = data, Success = true });
+
+    /// <summary>
+    /// Creates a BadRequest response with error details for validation errors or domain rule violations
+    /// </summary>
+    /// <param name="message">The error message</param>
+    /// <param name="errors">Collection of validation errors or domain rule violations</param>
+    /// <returns>BadRequest response with detailed error information</returns>
+    protected IActionResult BadRequestWithErrors(string message, IEnumerable<ValidationErrorDetail> errors) =>
+        base.BadRequest(new ApiResponse 
+        { 
+            Message = message, 
+            Success = false,
+            Errors = errors
+        });
 }

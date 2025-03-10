@@ -1,30 +1,266 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-// Estilos para os snackbars
-.success-snackbar {
-  background: #43a047;
+/* Custom Notification Styles */
+.notification-success {
+  background-color: #43a047;
   color: white;
 }
 
-.error-snackbar {
-  background: #d32f2f;
+.notification-error {
+  background-color: #d32f2f;
   color: white;
 }
 
-.info-snackbar {
-  background: #2196f3;
+.notification-info {
+  background-color: #1976d2;
   color: white;
 }
 
-.warning-snackbar {
-  background: #ff9800;
+.notification-warning {
+  background-color: #ffa000;
   color: white;
 }
 
-// Estilo para o botão de fechar
-.mat-mdc-simple-snack-bar .mdc-button {
-  color: white;
+/* Global spacing */
+.mat-snack-bar-container {
+  margin: 8px !important;
+}
+
+/* Material Overrides */
+.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  padding: 12px !important;
+}
+
+.mat-mdc-snack-bar-container .mat-mdc-button.mat-mdc-snack-bar-action {
+  color: white !important;
+}
+
+/* Loading Bar Styles */
+.loading-bar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+}
+
+/* Global styling */
+html, body { 
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+/* Container styling */
+.container-fluid {
+  padding: 16px;
+}
+
+/* Utility classes */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Spacing utilities */
+.mt-1 { margin-top: 0.25rem !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.mt-3 { margin-top: 1rem !important; }
+.mt-4 { margin-top: 1.5rem !important; }
+.mt-5 { margin-top: 3rem !important; }
+
+.mb-1 { margin-bottom: 0.25rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
+.mb-5 { margin-bottom: 3rem !important; }
+
+.ml-1 { margin-left: 0.25rem !important; }
+.ml-2 { margin-left: 0.5rem !important; }
+.ml-3 { margin-left: 1rem !important; }
+.ml-4 { margin-left: 1.5rem !important; }
+.ml-5 { margin-left: 3rem !important; }
+
+.mr-1 { margin-right: 0.25rem !important; }
+.mr-2 { margin-right: 0.5rem !important; }
+.mr-3 { margin-right: 1rem !important; }
+.mr-4 { margin-right: 1.5rem !important; }
+.mr-5 { margin-right: 3rem !important; }
+
+.p-1 { padding: 0.25rem !important; }
+.p-2 { padding: 0.5rem !important; }
+.p-3 { padding: 1rem !important; }
+.p-4 { padding: 1.5rem !important; }
+.p-5 { padding: 3rem !important; }
+
+/* Prevent horizontal scrollbar */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Fix for mat-card to ensure consistent heights */
+.mat-card {
+  box-sizing: border-box;
+}
+
+/* Responsiveness improvements */
+@media (max-width: 576px) {
+  .container-fluid {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+/* Ensure cards don't exceed their container width */
+.mat-card {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Mobile device enhancements */
+@media (max-width: 599px) {
+  .mat-mdc-raised-button,
+  .mat-mdc-stroked-button,
+  .mat-mdc-button {
+    min-height: 48px !important;
+    line-height: 48px !important;
+  }
+  
+  /* Ensure buttons have adequate touch targets */
+  button, 
+  .mat-mdc-button-base {
+    touch-action: manipulation;
+  }
+  
+  /* Increase touch target size */
+  .mat-icon-button {
+    width: 44px !important;
+    height: 44px !important;
+    line-height: 44px !important;
+  }
+  
+  .mat-mdc-dialog-container {
+    border-radius: 0 !important;
+  }
+  
+  /* Increase spacing between clickable elements */
+  .mat-mdc-dialog-actions {
+    gap: 10px;
+  }
+  
+  /* Ensure dialog content scrolls smoothly on touch devices */
+  .mat-mdc-dialog-content {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Fix for empty cart view on mobile */
+  .empty-cart {
+    min-height: 280px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 24px 16px 40px !important;
+  }
+  
+  .empty-cart-message {
+    font-size: 20px !important;
+    margin: 24px 0 40px !important;
+  }
+  
+  .empty-cart-icon {
+    transform: scale(1.2);
+  }
+  
+  /* Ensure buttons are always visible in mobile devices */
+  .action-buttons {
+    position: sticky !important;
+    bottom: 0 !important;
+    background-color: white !important;
+    z-index: 100 !important;
+    padding: 16px !important;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.15) !important;
+  }
+  
+  /* Make buttons larger for better touch targets */
+  .action-button, 
+  .checkout-button {
+    height: 56px !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+  }
+  
+  /* Add extra padding at the bottom of content to prevent buttons overlapping content */
+  .cart-items {
+    padding-bottom: 16px !important;
+  }
+}
+
+/* Cart Modal Dialog styles */
+.mobile-cart-dialog {
+  /* Override Material Dialog styles for mobile */
+  .mat-mdc-dialog-container {
+    padding: 0;
+    border-radius: 0;
+  }
+  
+  .mat-mdc-dialog-surface {
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  
+  /* Make sure dialog takes full screen */
+  .cdk-overlay-pane {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  
+  /* Always show the mobile footer */
+  .mobile-footer {
+    display: block !important;
+  }
+}
+
+.desktop-cart-dialog {
+  .mat-mdc-dialog-container {
+    border-radius: 4px !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Override Material Dialog positioning */
+.cdk-global-overlay-wrapper {
+  overflow: hidden !important;
+}
+
+/* Cart dialog backdrop */
+.cart-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Global focus outline styles for accessibility */
+:focus-visible {
+  outline: 2px solid #1976d2;
+  outline-offset: 1px;
 }

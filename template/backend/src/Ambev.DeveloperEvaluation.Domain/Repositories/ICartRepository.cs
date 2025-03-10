@@ -18,41 +18,20 @@ public interface ICartRepository
     Task<Cart> CreateAsync(Cart cart, CancellationToken cancellationToken = default);
     
     /// <summary>
-    /// Gets a cart by its ID
+    /// Gets paged carts for a specific customer
     /// </summary>
-    /// <param name="id">The cart ID</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The cart if found, otherwise null</returns>
-    Task<Cart?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    
-    /// <summary>
-    /// Gets all carts
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>All carts</returns>
-    Task<IEnumerable<Cart>> GetAllAsync(CancellationToken cancellationToken = default);
-    
-    /// <summary>
-    /// Gets paged carts
-    /// </summary>
+    /// <param name="customerId">The customer ID</param>
     /// <param name="pageNumber">The page number</param>
     /// <param name="pageSize">The page size</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>Paged carts</returns>
-    Task<IEnumerable<Cart>> GetAllPagedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default);
+    /// <returns>Paged carts for the customer</returns>
+    Task<IEnumerable<Cart>> GetAllPagedByCustomerAsync(Guid customerId, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
     
     /// <summary>
-    /// Gets the total count of carts
+    /// Gets the total count of carts for a specific customer
     /// </summary>
+    /// <param name="customerId">The customer ID</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The total count of carts</returns>
-    Task<int> CountAsync(CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Updates a cart
-    /// </summary>
-    /// <param name="cart">The cart to update</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The updated cart</returns>
-    Task<Cart> UpdateAsync(Cart cart, CancellationToken cancellationToken = default);
+    /// <returns>The total count of carts for the customer</returns>
+    Task<int> CountByCustomerAsync(Guid customerId, CancellationToken cancellationToken = default);
 }

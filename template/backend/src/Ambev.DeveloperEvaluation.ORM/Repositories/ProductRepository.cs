@@ -21,80 +21,27 @@ public class ProductRepository : IProductRepository
     }
 
     /// <summary>
-    /// Creates a new product in the repository.
+    /// Gets paged products
     /// </summary>
-    /// <param name="product">The product to create</param>
+    /// <param name="pageNumber">The page number</param>
+    /// <param name="pageSize">The page size</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The created product</returns>
-    public async Task<Product> CreateAsync(Product product, CancellationToken cancellationToken = default)
-    {
-        await _dbContext.Products.AddAsync(product, cancellationToken);
-        return product;
-    }
-
-    /// <summary>
-    /// Updates an existing product in the repository.
-    /// </summary>
-    /// <param name="product">The product to update</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The updated product</returns>
-    public async Task<Product> UpdateAsync(Product product, CancellationToken cancellationToken = default)
-    {
-        _dbContext.Entry(product).State = EntityState.Modified;
-        await Task.CompletedTask;
-        return product;
-    }
-
-    /// <summary>
-    /// Retrieves a product by its unique identifier.
-    /// </summary>
-    /// <param name="id">The unique identifier of the product</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The product if found, null otherwise</returns>
-    public async Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    /// <returns>Paged products</returns>
+    public async Task<IEnumerable<Product>> GetAllPagedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
         return await _dbContext.Products
-            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
-    }
-
-    /// <summary>
-    /// Retrieves a product by its SKU.
-    /// </summary>
-    /// <param name="sku">The SKU to search for</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The product if found, null otherwise</returns>
-    public async Task<Product?> GetBySkuAsync(string sku, CancellationToken cancellationToken = default)
-    {
-        return await _dbContext.Products
-            .FirstOrDefaultAsync(p => p.Sku == sku, cancellationToken);
-    }
-
-    /// <summary>
-    /// Retrieves all products.
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>List of all products</returns>
-    public async Task<IEnumerable<Product>> GetAllAsync(CancellationToken cancellationToken = default)
-    {
-        return await _dbContext.Products
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
     }
 
     /// <summary>
-    /// Deletes a product from the repository.
+    /// Gets the total count of products
     /// </summary>
-    /// <param name="id">The unique identifier of the product to delete</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>True if the product was deleted, false if not found</returns>
-    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    /// <returns>The total count of products</returns>
+    public async Task<int> CountAsync(CancellationToken cancellationToken = default)
     {
-        var product = await _dbContext.Products
-            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
-
-        if (product == null)
-            return false;
-
-        _dbContext.Products.Remove(product);
-        return true;
+        return await _dbContext.Products.CountAsync(cancellationToken);
     }
 } 

@@ -99,7 +99,7 @@ public class Program
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UserContextBehavior<,>));
 
             var app = builder.Build();
-            app.UseMiddleware<ValidationExceptionMiddleware>();
+            app.UseMiddleware<GlobalExceptionMiddleware>();
 
             // Habilitar CORS - política padrão sem restrições
             app.UseCors();

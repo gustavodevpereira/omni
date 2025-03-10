@@ -1,84 +1,93 @@
-import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Injectable } from '@angular/core';
+import {
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpInterceptor,
+  HttpErrorResponse
+} from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
-import { NotificationService } from '../services/notification.service';
-import { LoggingService } from '../services/logging.service';
 
 /**
- * Authentication HTTP interceptor for handling authorization and auth-related errors.
+ * Authentication Interceptor
  * 
- * @description
- * This interceptor performs several critical authentication tasks:
- * 
- * 1. Adds Authorization header with JWT token to outgoing requests when a token exists
- * 2. Processes authentication-related error responses (401, 403, 500)
- * 3. Handles session expiration by redirecting to login
- * 4. Provides appropriate user notifications for different auth scenarios
- * 5. Logs authentication-related events for monitoring and debugging
- * 
- * The interceptor is a key component in maintaining the application's security boundary
- * and providing a consistent user experience for authentication-related scenarios.
+ * Intercepts all HTTP requests and adds the bearer token from localStorage
+ * to the Authorization header if available.
  */
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  // Access required services
-  const authService = inject(AuthService);
-  const router = inject(Router);
-  const notificationService = inject(NotificationService);
-  const loggingService = inject(LoggingService);
+@Injectable()
+export class AuthInterceptor implements HttpInterceptor {
+  constructor(private authService: AuthService) {}
 
-  // Get authentication token from storage
-  const token = localStorage.getItem('auth_token');
-  
-  loggingService.logInfo(`Processing request to: ${req.url}`);
-  
-  // If token exists, add Authorization header to the request
-  if (token) {
-    const authReq = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+  /**
+   * Intercepts HTTP requests and adds the Authorization header with bearer token
+   * 
+   * @param request - The original HTTP request
+   * @param next - The HTTP handler for the request pipeline
+   * @returns An observable of the HTTP event stream
+   */
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    // Skip authentication for certain endpoints
+    if (this.shouldSkipAuth(request)) {
+      return next.handle(request);
+    }
     
-    loggingService.logInfo('Authorization header added to request');
+    // Get token from localStorage
+    const token = localStorage.getItem('auth_token');
     
-    // Process the authenticated request and handle auth-related errors
-    return next(authReq).pipe(
+    // If token exists, clone the request and add the authorization header
+    if (token) {
+      request = this.addToken(request, token);
+    }
+    
+    // Process the request
+    return next.handle(request).pipe(
       catchError(error => {
-        // Handle authentication errors
-        if (error.status === 401) {
-          // Only redirect to login if not already on login page
-          if (!router.url.includes('/auth/login')) {
-            loggingService.logWarning('Received 401 Unauthorized response, logging out user');
-            authService.logout();
-            router.navigate(['/auth/login']);
-            notificationService.error('Your session has expired. Please log in again.');
-          }
-        } else if (error.status === 403) {
-          loggingService.logWarning(`Access forbidden to resource: ${req.url}`);
-          notificationService.error('You do not have permission to perform this action.');
-        } else if (error.status === 500) {
-          loggingService.logError('Server error occurred', error);
-          notificationService.error('A server error occurred. Please try again later.');
+        if (error instanceof HttpErrorResponse && error.status === 401) {
+          // Handle 401 errors (Unauthorized) - log out the user
+          this.authService.logout();
         }
         
-        // Re-throw the error for other interceptors or error handlers
         return throwError(() => error);
       })
     );
   }
 
-  // If no token, process the request without authentication
-  loggingService.logInfo('No authentication token available, proceeding without Authorization header');
-  return next(req).pipe(
-    catchError(error => {
-      if (error.status === 500) {
-        loggingService.logError('Server error occurred', error);
-        notificationService.error('A server error occurred. Please try again later.');
+  /**
+   * Determines if authentication should be skipped for a request
+   * 
+   * @param request - HTTP request
+   * @returns True if auth should be skipped
+   */
+  private shouldSkipAuth(request: HttpRequest<any>): boolean {
+    // Skip if request explicitly asks to skip auth
+    if (request.headers.has('x-skip-auth')) {
+      return true;
+    }
+    
+    // Skip auth for login and register endpoints
+    const url = request.url.toLowerCase();
+    return (
+      url.includes('/auth/login') || 
+      url.includes('/auth/register') ||
+      url.includes('/auth/forgot-password') ||
+      url.includes('/auth/reset-password')
+    );
+  }
+
+  /**
+   * Add authorization token to a request
+   * 
+   * @param request - HTTP request
+   * @param token - Authorization token
+   * @returns Request with token
+   */
+  private addToken(request: HttpRequest<any>, token: string): HttpRequest<any> {
+    return request.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
       }
-      return throwError(() => error);
-    })
-  );
-};
+    });
+  }
+} 

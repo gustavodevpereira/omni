@@ -1,0 +1,118 @@
+.product-list-container {
+  padding: 1rem 0;
+  overflow-x: hidden;
+}
+
+.cart-button {
+  margin-top: 8px;
+  transform: scale(1.2);
+}
+
+.product-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 8px;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  mat-card-header {
+    padding-bottom: 8px;
+  }
+
+  mat-card-content {
+    flex-grow: 1;
+  }
+  
+  mat-card-actions {
+    padding: 8px;
+    margin: 0;
+  }
+}
+
+.product-title {
+  font-size: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  margin-bottom: 0;
+}
+
+.product-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.4;
+  color: rgba(0, 0, 0, 0.7);
+  margin-bottom: 16px;
+  height: 40px; /* Fixed height for description */
+}
+
+.product-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 12px;
+  
+  .sku {
+    color: rgba(0, 0, 0, 0.6);
+  }
+  
+  .stock {
+    font-weight: 500;
+    
+    &.low-stock {
+      color: #f44336;
+    }
+  }
+}
+
+.product-price {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #3f51b5;
+}
+
+.product-status {
+  margin-bottom: 8px;
+  
+  .status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    background-color: #e0e0e0;
+    
+    &.status-active {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+  }
+}
+
+.large-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  opacity: 0.5;
+}
+
+// Fix scroll issues
+::ng-deep .mat-paginator {
+  background: transparent;
+}
+
+// Make sure paginator is centered
+::ng-deep .mat-paginator-container {
+  justify-content: center;
+} 

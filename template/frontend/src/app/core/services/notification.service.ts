@@ -1,107 +1,133 @@
 import { Injectable } from '@angular/core';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarConfig, MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
 
 /**
- * Service responsible for displaying notification messages to users.
+ * Notification types
+ */
+export enum NotificationType {
+  SUCCESS = 'success',
+  ERROR = 'error',
+  INFO = 'info',
+  WARNING = 'warning'
+}
+
+/**
+ * Default configuration for notifications
+ */
+const DEFAULT_CONFIG: MatSnackBarConfig = {
+  duration: 5000, // 5 seconds
+  horizontalPosition: 'end',
+  verticalPosition: 'top',
+};
+
+/**
+ * Notification Service
  * 
- * @description
- * This service provides methods to display various types of notifications
- * (success, error, info, warning) using Angular Material's SnackBar component.
- * 
- * The notifications are styled differently based on their type and have
- * sensible default durations that can be overridden when needed.
- * 
- * @example
- * // Display a success message
- * this.notificationService.success('Profile updated successfully');
- * 
- * // Display an error with longer duration
- * this.notificationService.error('Failed to update profile', 8000);
+ * Provides methods to display various types of notifications using Material's SnackBar.
+ * Centralizes notification display logic and styling.
  */
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
-  /**
-   * Default configuration for notifications
-   */
-  private defaultConfig: MatSnackBarConfig = {
-    horizontalPosition: 'end',
-    verticalPosition: 'top',
-  };
+  // Reference to the current notification
+  private activeSnackBarRef: MatSnackBarRef<any> | null = null;
+
+  constructor(private snackBar: MatSnackBar) { }
 
   /**
-   * Creates an instance of NotificationService.
-   * 
-   * @param snackBar - Angular Material's SnackBar service
-   */
-  constructor(private snackBar: MatSnackBar) {}
-
-  /**
-   * Displays a success notification message.
+   * Shows a success notification
    * 
    * @param message - The message to display
-   * @param duration - How long to display the message in milliseconds (default: 3000ms)
-   * 
-   * @example
-   * notificationService.success('Item added to cart');
+   * @param action - Optional action text
+   * @param config - Optional custom configuration
    */
-  success(message: string, duration: number = 3000): void {
-    this.snackBar.open(message, 'Close', {
-      ...this.defaultConfig,
-      duration,
-      panelClass: ['success-snackbar']
-    });
+  success(message: string, action: string = 'Close', config?: MatSnackBarConfig): void {
+    this.show(message, action, { ...DEFAULT_CONFIG, ...config, panelClass: ['notification-success'] });
   }
 
   /**
-   * Displays an error notification message.
+   * Shows an error notification
    * 
-   * @param message - The error message to display
-   * @param duration - How long to display the message in milliseconds (default: 5000ms)
-   * 
-   * @example
-   * notificationService.error('Failed to process payment');
+   * @param message - The message to display
+   * @param action - Optional action text
+   * @param config - Optional custom configuration
    */
-  error(message: string, duration: number = 5000): void {
-    this.snackBar.open(message, 'Close', {
-      ...this.defaultConfig,
-      duration,
-      panelClass: ['error-snackbar']
-    });
+  error(message: string, action: string = 'Close', config?: MatSnackBarConfig): void {
+    this.show(message, action, { ...DEFAULT_CONFIG, ...config, panelClass: ['notification-error'] });
   }
 
   /**
-   * Displays an informational notification message.
+   * Shows an info notification
    * 
-   * @param message - The information message to display
-   * @param duration - How long to display the message in milliseconds (default: 3000ms)
-   * 
-   * @example
-   * notificationService.info('Your order is being processed');
+   * @param message - The message to display
+   * @param action - Optional action text
+   * @param config - Optional custom configuration
    */
-  info(message: string, duration: number = 3000): void {
-    this.snackBar.open(message, 'Close', {
-      ...this.defaultConfig,
-      duration,
-      panelClass: ['info-snackbar']
-    });
+  info(message: string, action: string = 'Close', config?: MatSnackBarConfig): void {
+    this.show(message, action, { ...DEFAULT_CONFIG, ...config, panelClass: ['notification-info'] });
   }
 
   /**
-   * Displays a warning notification message.
+   * Shows a warning notification
    * 
-   * @param message - The warning message to display
-   * @param duration - How long to display the message in milliseconds (default: 4000ms)
-   * 
-   * @example
-   * notificationService.warning('Your session is about to expire');
+   * @param message - The message to display
+   * @param action - Optional action text
+   * @param config - Optional custom configuration
    */
-  warning(message: string, duration: number = 4000): void {
-    this.snackBar.open(message, 'Close', {
-      ...this.defaultConfig,
-      duration,
-      panelClass: ['warning-snackbar']
-    });
+  warning(message: string, action: string = 'Close', config?: MatSnackBarConfig): void {
+    this.show(message, action, { ...DEFAULT_CONFIG, ...config, panelClass: ['notification-warning'] });
+  }
+
+  /**
+   * Shows a notification with the given type
+   * 
+   * @param message - The message to display
+   * @param type - The type of notification
+   * @param action - Optional action text
+   * @param config - Optional custom configuration
+   */
+  notify(message: string, type: NotificationType, action: string = 'Close', config?: MatSnackBarConfig): void {
+    switch (type) {
+      case NotificationType.SUCCESS:
+        this.success(message, action, config);
+        break;
+      case NotificationType.ERROR:
+        this.error(message, action, config);
+        break;
+      case NotificationType.INFO:
+        this.info(message, action, config);
+        break;
+      case NotificationType.WARNING:
+        this.warning(message, action, config);
+        break;
+      default:
+        this.info(message, action, config);
+    }
+  }
+
+  /**
+   * Dismisses the current notification if it exists
+   */
+  dismiss(): void {
+    if (this.activeSnackBarRef) {
+      this.activeSnackBarRef.dismiss();
+      this.activeSnackBarRef = null;
+    }
+  }
+
+  /**
+   * Shows a notification using the SnackBar
+   * 
+   * @param message - The message to display
+   * @param action - The action text
+   * @param config - The SnackBar configuration
+   */
+  private show(message: string, action: string, config: MatSnackBarConfig): void {
+    // Dismiss any active notification before showing a new one
+    this.dismiss();
+    
+    // Open new notification and store the reference
+    this.activeSnackBarRef = this.snackBar.open(message, action, config);
   }
 } 

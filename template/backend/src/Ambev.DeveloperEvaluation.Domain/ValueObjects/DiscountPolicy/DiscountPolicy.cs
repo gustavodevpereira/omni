@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Domain.ValueObjects.DiscountPolicy.Strategies;
+﻿using Ambev.DeveloperEvaluation.Domain.Exceptions;
+using Ambev.DeveloperEvaluation.Domain.ValueObjects.DiscountPolicy.Strategies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
