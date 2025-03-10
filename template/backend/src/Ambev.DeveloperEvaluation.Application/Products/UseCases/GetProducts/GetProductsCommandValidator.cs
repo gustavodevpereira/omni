@@ -1,22 +1,21 @@
-using FluentValidation;
+using Ambev.DeveloperEvaluation.Application.Common.Validators;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.UseCases.GetProducts;
 
 /// <summary>
-/// Validator for GetProductsCommand
+/// Validator for <see cref="GetProductsCommand"/> that enforces validation rules for product list requests.
 /// </summary>
-public class GetProductsCommandValidator : AbstractValidator<GetProductsCommand>
+/// <remarks>
+/// This validator inherits common pagination validation rules from <see cref="PaginatedRequestValidator{T}"/>
+/// and can be extended with additional product-specific validation rules as needed.
+/// </remarks>
+public class GetProductsCommandValidator : PaginatedRequestValidator<GetProductsCommand>
 {
     /// <summary>
-    /// Initializes a new instance of GetProductsCommandValidator
+    /// Initializes a new instance of the <see cref="GetProductsCommandValidator"/> class.
     /// </summary>
-    public GetProductsCommandValidator()
+    public GetProductsCommandValidator() : base()
     {
-        RuleFor(x => x.PageNumber)
-            .GreaterThan(0).WithMessage("Page number must be greater than 0");
-
-        RuleFor(x => x.PageSize)
-            .GreaterThan(0).WithMessage("Page size must be greater than 0")
-            .LessThanOrEqualTo(100).WithMessage("Page size must not exceed 100");
+        // Additional validation rules specific to GetProductsCommand can be added here
     }
 } 

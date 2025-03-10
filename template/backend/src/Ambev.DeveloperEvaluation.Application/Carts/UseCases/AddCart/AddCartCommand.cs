@@ -16,7 +16,7 @@ public class AddCartCommand : IRequest<CartResult>
     /// <summary>
     /// Costumer name who owns the cart
     /// </summary>
-    public string CostumerName { get; set; }
+    public string CostumerName { get; set; } = string.Empty;
 
     /// <summary>
     /// Branch identifier where the sale was made
@@ -26,7 +26,7 @@ public class AddCartCommand : IRequest<CartResult>
     /// <summary>
     /// Branch name where the sale was made
     /// </summary>
-    public string BranchName { get; set; }
+    public string BranchName { get; set; } = string.Empty;
 
     /// <summary>
     /// Cart creation date
