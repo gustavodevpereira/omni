@@ -40,6 +40,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
                 .Where(c => c.CustomerExternalId == customerId)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
+                .OrderBy(y => y.CreatedOn)
                 .ToListAsync(cancellationToken);
         }
 
