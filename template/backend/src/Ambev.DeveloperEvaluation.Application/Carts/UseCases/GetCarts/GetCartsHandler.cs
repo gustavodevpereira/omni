@@ -7,23 +7,23 @@ using Ambev.DeveloperEvaluation.Application.Carts.Common.Results;
 namespace Ambev.DeveloperEvaluation.Application.Carts.UseCases.GetCarts;
 
 /// <summary>
-/// Handler for processing GetAllSalesCommand requests
+/// Handler for processing GetCartsCommand requests
 /// </summary>
 public class GetCartsHandler : IRequestHandler<GetCartsCommand, GetCartsResult>
 {
-    private readonly ICartRepository _saleRepository;
+    private readonly ICartRepository _cartRepository;
     private readonly IMapper _mapper;
 
     /// <summary>
     /// Initializes a new instance of GetCartsHandler
     /// </summary>
-    /// <param name="saleRepository">The Cart repository</param>
+    /// <param name="cartRepository">The Cart repository</param>
     /// <param name="mapper">The AutoMapper instance</param>
     public GetCartsHandler(
-        ICartRepository saleRepository,
+        ICartRepository cartRepository,
         IMapper mapper)
     {
-        _saleRepository = saleRepository;
+        _cartRepository = cartRepository;
         _mapper = mapper;
     }
 
@@ -41,12 +41,24 @@ public class GetCartsHandler : IRequestHandler<GetCartsCommand, GetCartsResult>
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
 
-        var sales = await _saleRepository.GetAllPagedAsync(request.PageNumber, request.PageSize, cancellationToken);
-        var totalCount = await _saleRepository.CountAsync(cancellationToken);
+        IEnumerable<Domain.Entities.Carts.Cart> carts;
+        int totalCount;
+
+        if (!request.CustomerId.HasValue)
+        {
+            throw new InvalidOperationException("CustomerId doesn't have value");
+        }
+
+
+        // Get carts for the specific customer
+        carts = await _cartRepository.GetAllPagedByCustomerAsync(
+        request.CustomerId.Value, request.PageNumber, request.PageSize, cancellationToken);
+        totalCount = await _cartRepository.CountByCustomerAsync(request.CustomerId.Value, cancellationToken);
+
 
         var result = new GetCartsResult
         {
-            Items = _mapper.Map<List<CartResult>>(sales),
+            Items = _mapper.Map<List<CartResult>>(carts),
             TotalCount = totalCount,
             PageNumber = request.PageNumber,
             PageSize = request.PageSize
