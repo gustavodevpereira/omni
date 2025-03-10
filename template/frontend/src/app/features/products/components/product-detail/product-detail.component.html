@@ -1,0 +1,51 @@
+<div class="container mt-5">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <mat-spinner class="mx-auto"></mat-spinner>
+  </div>
+  
+  <!-- Product Details -->
+  <div *ngIf="!isLoading && product" class="row">
+    <!-- Product Info -->
+    <div class="col-md-12">
+      <button mat-icon-button color="primary" class="back-button mb-3" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      
+      <h1 class="product-title mb-2">{{product.name}}</h1>
+      
+      <div class="d-flex align-items-center mb-3">
+        <span class="product-category">Category: {{product.category}}</span>
+        <span class="ml-3 product-sku">SKU: {{product.sku}}</span>
+        <span class="ml-3 product-status" [ngClass]="{'status-active': product.status === 'Active'}">
+          Status: {{product.status}}
+        </span>
+      </div>
+      
+      <p class="product-price mb-4">${{product.price.toFixed(2)}}</p>
+      
+      <p class="product-description mb-4">{{product.description}}</p>
+      
+      <div class="stock-info mb-3" [ngClass]="{'low-stock': product.stockQuantity < 10}">
+        Stock Available: {{product.stockQuantity}}
+      </div>
+      
+      <div class="quantity-control mb-4">
+        <button mat-mini-fab color="primary" (click)="decreaseQuantity()" [disabled]="quantity <= 1">
+          <mat-icon>remove</mat-icon>
+        </button>
+        <span class="quantity-display">{{quantity}}</span>
+        <button mat-mini-fab color="primary" (click)="increaseQuantity()" [disabled]="quantity >= product.stockQuantity">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      
+      <div class="d-flex">
+        <button mat-raised-button color="primary" class="add-to-cart-btn" (click)="addToCart()" [disabled]="product.stockQuantity <= 0">
+          <mat-icon>shopping_cart</mat-icon>
+          Add to Cart
+        </button>
+      </div>
+    </div>
+  </div>
+</div> 
