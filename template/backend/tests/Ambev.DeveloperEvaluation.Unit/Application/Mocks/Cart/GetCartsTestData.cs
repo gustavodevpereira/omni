@@ -57,7 +57,7 @@ public static class GetCartsTestData
     /// <returns>An invalid GetCartsCommand with negative page number.</returns>
     public static GetCartsCommand GenerateInvalidCommandWithNegativePageNumber()
     {
-        return new GetCartsCommand(pageNumber: -1, pageSize: 10);
+        return new GetCartsCommand(pageNumber: -1, pageSize: 10, customerId: Guid.NewGuid());
     }
 
     /// <summary>
@@ -66,7 +66,7 @@ public static class GetCartsTestData
     /// <returns>An invalid GetCartsCommand with negative page size.</returns>
     public static GetCartsCommand GenerateInvalidCommandWithNegativePageSize()
     {
-        return new GetCartsCommand(pageNumber: 1, pageSize: -1);
+        return new GetCartsCommand(pageNumber: 1, pageSize: -1, customerId: Guid.NewGuid());
     }
 
     /// <summary>
@@ -75,6 +75,6 @@ public static class GetCartsTestData
     /// <returns>An invalid GetCartsCommand with excessive page size.</returns>
     public static GetCartsCommand GenerateInvalidCommandWithExcessivePageSize()
     {
-        return new GetCartsCommand(pageNumber: 1, pageSize: 101);
+        return new GetCartsCommand(pageNumber: 1, pageSize: 101, customerId: Guid.NewGuid());
     }
 } 

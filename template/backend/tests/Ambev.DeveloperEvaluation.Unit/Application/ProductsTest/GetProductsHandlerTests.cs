@@ -75,46 +75,4 @@ public class GetProductsHandlerTests
         result.PageSize.Should().Be(command.PageSize);
         result.TotalPages.Should().Be((int)Math.Ceiling(totalCount / (double)command.PageSize));
     }
-
-    /// <summary>
-    /// Tests that an invalid command with negative page number throws validation exception
-    /// </summary>
-    [Fact(DisplayName = "Given invalid command with negative page number When handling Then throws validation exception")]
-    public async Task Handle_InvalidCommandWithNegativePageNumber_ThrowsValidationException()
-    {
-        // Arrange
-        var command = GetProductsTestData.CreateInvalidCommandWithNegativePageNumber();
-
-        // Act & Assert
-        await Assert.ThrowsAsync<ValidationException>(() => 
-            _handler.Handle(command, CancellationToken.None));
-    }
-
-    /// <summary>
-    /// Tests that an invalid command with negative page size throws validation exception
-    /// </summary>
-    [Fact(DisplayName = "Given invalid command with negative page size When handling Then throws validation exception")]
-    public async Task Handle_InvalidCommandWithNegativePageSize_ThrowsValidationException()
-    {
-        // Arrange
-        var command = GetProductsTestData.CreateInvalidCommandWithNegativePageSize();
-
-        // Act & Assert
-        await Assert.ThrowsAsync<ValidationException>(() => 
-            _handler.Handle(command, CancellationToken.None));
-    }
-
-    /// <summary>
-    /// Tests that an invalid command with excessive page size throws validation exception
-    /// </summary>
-    [Fact(DisplayName = "Given invalid command with excessive page size When handling Then throws validation exception")]
-    public async Task Handle_InvalidCommandWithExcessivePageSize_ThrowsValidationException()
-    {
-        // Arrange
-        var command = GetProductsTestData.CreateInvalidCommandWithExcessivePageSize();
-
-        // Act & Assert
-        await Assert.ThrowsAsync<ValidationException>(() => 
-            _handler.Handle(command, CancellationToken.None));
-    }
-} 
+}

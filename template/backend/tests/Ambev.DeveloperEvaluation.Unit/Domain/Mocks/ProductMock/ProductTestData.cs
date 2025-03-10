@@ -25,10 +25,12 @@ public static class ProductTestData
     private static readonly Faker<Product> ProductFaker = new Faker<Product>()
         .RuleFor(p => p.Name, f => f.Commerce.ProductName())
         .RuleFor(p => p.Description, f => f.Commerce.ProductDescription())
-        .RuleFor(p => p.Sku, f => $"SKU-{f.Random.AlphaNumeric(8)}")
+        .RuleFor(p => p.Sku, f => f.Random.AlphaNumeric(10).ToUpper())
         .RuleFor(p => p.Price, f => decimal.Parse(f.Commerce.Price(10, 500)))
         .RuleFor(p => p.StockQuantity, f => f.Random.Number(1, 100))
         .RuleFor(p => p.Category, f => f.Commerce.Categories(1)[0])
+        .RuleFor(p => p.BranchExternalId, f => f.Random.Guid())
+        .RuleFor(p => p.BranchName, f => f.Company.CompanyName())
         .RuleFor(p => p.Status, f => ProductStatus.Active);
 
     /// <summary>
@@ -70,7 +72,7 @@ public static class ProductTestData
     public static string GenerateValidSku()
     {
         var faker = new Faker();
-        return $"SKU-{faker.Random.AlphaNumeric(8)}";
+        return faker.Random.AlphaNumeric(10).ToUpper();
     }
 
     /// <summary>
