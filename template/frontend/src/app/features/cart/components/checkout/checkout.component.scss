@@ -1,0 +1,258 @@
+// Estilos gerais
+.large-icon {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+  color: #999;
+}
+
+.text-muted {
+  color: #6c757d;
+}
+
+// Card e layout
+.checkout-card {
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+// Itens do pedido
+.order-items {
+  margin: 20px 0;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.item-details {
+  display: flex;
+  align-items: center;
+}
+
+.item-name {
+  font-weight: 500;
+}
+
+.item-quantity {
+  margin-left: 10px;
+  color: #666;
+}
+
+.item-price {
+  font-weight: 500;
+}
+
+// Resumo do pedido
+.order-summary {
+  margin-top: 20px;
+  border-top: 2px solid #eee;
+  padding-top: 15px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.discount-row {
+  color: #4caf50;
+}
+
+.discount-amount {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.total {
+  font-weight: 700;
+  font-size: 18px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+  margin-top: 8px;
+}
+
+.discounted-total {
+  color: #2e7d32;
+}
+
+// Itens com desconto
+.discount-preview {
+  margin: 15px 0;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.discounted-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.discounted-name {
+  font-weight: 500;
+}
+
+.discounted-quantity {
+  margin-left: 10px;
+  color: #666;
+}
+
+.discounted-price-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: #999;
+  font-size: 0.85em;
+}
+
+.discounted-price {
+  font-weight: 500;
+  color: #2e7d32;
+}
+
+.discount-tag {
+  display: inline-block;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 10px;
+  padding: 2px 6px;
+  font-size: 0.75em;
+  margin-left: 5px;
+}
+
+.discount-notice {
+  display: flex;
+  align-items: center;
+  color: #2e7d32;
+  margin-top: 15px;
+  background-color: #e8f5e9;
+  padding: 8px 12px;
+  border-radius: 4px;
+  
+  mat-icon {
+    margin-right: 8px;
+  }
+}
+
+// Animações
+@keyframes highlight {
+  0% { background-color: transparent; }
+  30% { background-color: #e8f5e9; }
+  100% { background-color: transparent; }
+}
+
+.highlight-animation {
+  animation: highlight 1.5s ease-in-out;
+}
+
+// Botões e Ações
+.checkout-actions {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 16px;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.spinner-inline {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+// Estilo dos botões
+.shop-button {
+  margin-right: auto;  // Empurra para a esquerda
+  border: none;
+  
+  mat-icon {
+    margin-right: 4px;
+  }
+}
+
+.discount-button {
+  min-width: 120px;
+  height: 36px;
+  border-color: #66bb6a;
+  color: #2e7d32;
+  
+  mat-icon {
+    margin-right: 4px;
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+  }
+}
+
+.order-button {
+  min-width: 120px;
+  height: 36px;
+  background-color: #3f51b5;
+  color: white;
+  
+  mat-icon {
+    margin-right: 4px;
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+  }
+}
+
+// Media queries para responsividade
+@media (max-width: 599px) {
+  .checkout-actions {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  
+  .shop-button,
+  .discount-button,
+  .order-button {
+    flex: 0 0 auto;
+    padding: 0 12px;
+    min-width: initial;
+    height: 42px;
+    
+    span {
+      font-size: 13px;
+    }
+    
+    mat-icon {
+      margin-right: 4px;
+      font-size: 16px;
+      height: 16px;
+      width: 16px;
+    }
+  }
+  
+  // Para telas muito pequenas
+  @media (max-width: 400px) {
+    .checkout-actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+    }
+    
+    .shop-button,
+    .discount-button,
+    .order-button {
+      margin: 0;
+      width: 100%;
+      height: 42px;
+    }
+  }
+} 

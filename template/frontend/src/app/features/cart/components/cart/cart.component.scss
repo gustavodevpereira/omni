@@ -1,0 +1,245 @@
+.large-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #ccc;
+}
+
+.empty-cart-container {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 48px;
+}
+
+// Melhorias para alinhamento
+.cart-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  
+  .col-lg-8, .col-lg-4 {
+    margin-bottom: 16px;
+  }
+}
+
+.main-card, .summary-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  
+  .mat-card-header {
+    padding: 16px 16px 0 16px;
+    margin-bottom: 8px;
+  }
+  
+  .mat-card-content {
+    flex: 1;
+    padding: 0 16px 16px 16px;
+  }
+}
+
+.cart-items-container {
+  margin-bottom: 16px;
+}
+
+.cart-header,
+.cart-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.cart-header {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.6);
+  border-bottom: 1px solid #eee;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.cart-item {
+  padding: 16px 0;
+  border-bottom: 1px solid #eee;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.product-col {
+  flex: 3;
+  min-width: 0;
+}
+
+.price-col,
+.quantity-col,
+.total-col {
+  flex: 1;
+  text-align: center;
+}
+
+.action-col {
+  flex: 0 0 50px;
+  text-align: right;
+}
+
+.cart-item-image {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  margin-right: 16px;
+}
+
+.cart-item-details {
+  min-width: 0;
+}
+
+.cart-item-title {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cart-item-category, .cart-item-sku {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(0, 0, 0, 0.6);
+  text-transform: capitalize;
+}
+
+.cart-item-sku {
+  margin-top: 4px;
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .quantity-btn {
+    width: 30px !important;
+    height: 30px !important;
+    line-height: 30px !important;
+    
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      line-height: 18px;
+    }
+  }
+}
+
+.quantity-display {
+  width: 40px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 1rem;
+  margin: 0 8px;
+}
+
+.order-summary {
+  padding: 16px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  
+  &.total {
+    font-size: 1.2rem;
+    font-weight: 500;
+    padding-top: 12px;
+    margin-top: 4px;
+  }
+}
+
+.checkout-btn {
+  width: 100%;
+  margin-top: 24px;
+  padding: 12px;
+  font-weight: 500;
+}
+
+.cart-actions {
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+/* Responsive styles */
+@media (max-width: 767px) {
+  .cart-item {
+    flex-wrap: wrap;
+    position: relative;
+    padding: 16px 8px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    
+    .product-col {
+      flex: 0 0 100%;
+      margin-bottom: 16px;
+      padding: 0 8px;
+    }
+    
+    .price-col,
+    .total-col {
+      flex: 1;
+      text-align: left;
+      padding: 8px;
+    }
+    
+    .quantity-col {
+      flex: 2;
+      text-align: center;
+      padding: 8px;
+    }
+    
+    .action-col {
+      position: absolute;
+      top: 12px;
+      right: 8px;
+    }
+    
+    .cart-item-title {
+      padding-right: 40px; // Space for delete button
+    }
+  }
+  
+  // Improve summary card on mobile
+  .summary-card {
+    position: relative;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+  }
+  
+  .cart-actions {
+    flex-direction: column;
+    
+    button {
+      margin-bottom: 12px;
+      width: 100%;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+// Add specific styles for the summary card
+.summary-card {
+  .mat-card-header {
+    padding: 16px 16px 0 16px;
+  }
+  
+  .price {
+    font-weight: 500;
+  }
+} 
