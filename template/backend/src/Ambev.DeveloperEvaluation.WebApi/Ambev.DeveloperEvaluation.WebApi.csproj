@@ -11,6 +11,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\**" />
+    <Compile Remove="Features\Users\ListUsers\**" />
+    <Compile Remove="Features\Users\UpdateUser\**" />
+    <Content Remove="Controllers\**" />
+    <Content Remove="Features\Users\ListUsers\**" />
+    <Content Remove="Features\Users\UpdateUser\**" />
+    <EmbeddedResource Remove="Controllers\**" />
+    <EmbeddedResource Remove="Features\Users\ListUsers\**" />
+    <EmbeddedResource Remove="Features\Users\UpdateUser\**" />
+    <None Remove="Controllers\**" />
+    <None Remove="Features\Users\ListUsers\**" />
+    <None Remove="Features\Users\UpdateUser\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -26,11 +41,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="Features\Users\GetUser\" />
     <Folder Include="Features\Users\DeleteUser\" />
-    <Folder Include="Features\Users\ListUsers\" />
-    <Folder Include="Features\Users\UpdateUser\" />
   </ItemGroup>
 
 </Project>
