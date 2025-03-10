@@ -1,6 +1,7 @@
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Validation;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities.Products;
@@ -44,6 +45,16 @@ public class Product : BaseEntity
     /// Gets or sets the product's category.
     /// </summary>
     public string Category { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the external identifier for the branch where the product belongs.
+    /// </summary>
+    public Guid BranchExternalId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the branch name (denormalized data) of the product.
+    /// </summary>
+    public string BranchName { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the product's current status.

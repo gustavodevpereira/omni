@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Events\Carts\" />
     <Folder Include="Exceptions\" />
     <Folder Include="ValueObjects\" />
   </ItemGroup>
