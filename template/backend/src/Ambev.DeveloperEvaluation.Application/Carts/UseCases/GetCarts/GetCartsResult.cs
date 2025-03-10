@@ -1,34 +1,36 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Carts.Common.Results;
+using Ambev.DeveloperEvaluation.Application.Common.Results;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.UseCases.GetCarts;
 
 /// <summary>
-/// Response for list of carts
+/// Response containing a paginated list of carts.
 /// </summary>
-public class GetCartsResult
+/// <remarks>
+/// This result is returned by the <see cref="GetCartsHandler"/> and contains
+/// a collection of carts along with pagination metadata.
+/// </remarks>
+public record GetCartsResult : PaginatedResultBase<CartResult>
 {
     /// <summary>
-    /// List of individual carts
+    /// Initializes a new instance of the <see cref="GetCartsResult"/> class.
     /// </summary>
-    public List<CartResult> Items { get; set; } = [];
+    public GetCartsResult()
+    {
+    }
 
     /// <summary>
-    /// Gets or sets the total count of carts.
+    /// Initializes a new instance of the <see cref="GetCartsResult"/> class with specified data.
     /// </summary>
-    public int TotalCount { get; set; }
-
-    /// <summary>
-    /// Gets or sets the current page number.
-    /// </summary>
-    public int PageNumber { get; set; }
-
-    /// <summary>
-    /// Gets or sets the page size.
-    /// </summary>
-    public int PageSize { get; set; }
-
-    /// <summary>
-    /// Gets or sets the total number of pages.
-    /// </summary>
-    public int TotalPages => (int)Math.Ceiling(TotalCount / (double)PageSize);
+    /// <param name="items">The collection of cart results</param>
+    /// <param name="totalCount">The total count of all carts (before pagination)</param>
+    /// <param name="pageNumber">The current page number</param>
+    /// <param name="pageSize">The page size</param>
+    public GetCartsResult(IReadOnlyCollection<CartResult> items, int totalCount, int pageNumber, int pageSize)
+    {
+        Items = items;
+        TotalCount = totalCount;
+        PageNumber = pageNumber;
+        PageSize = pageSize;
+    }
 }

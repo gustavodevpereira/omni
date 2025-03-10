@@ -2,6 +2,7 @@ using Ambev.DeveloperEvaluation.Application;
 using Ambev.DeveloperEvaluation.Application.Common;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Logging;
+using Ambev.DeveloperEvaluation.Common.Messaging;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Common;
@@ -11,7 +12,10 @@ using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using Rebus.Bus;
+using Rebus.ServiceProvider;
 using Serilog;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
@@ -81,6 +85,9 @@ public class Program
 
             builder.Services.AddJwtAuthentication(builder.Configuration);
 
+            // Register message broker service
+            builder.Services.AddMessageBroker(builder.Configuration);
+
             builder.RegisterDependencies();
 
             builder.Services.AddAutoMapper(typeof(Program).Assembly, typeof(ApplicationLayer).Assembly);
@@ -93,12 +100,14 @@ public class Program
                 );
             });
 
+
             builder.Services.AddScoped<IUserContext, HttpUserContext>();
 
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UserContextBehavior<,>));
 
             var app = builder.Build();
+            
             app.UseMiddleware<GlobalExceptionMiddleware>();
 
             // Habilitar CORS - política padrão sem restrições

@@ -70,6 +70,33 @@ public class CartProduct
     }
 
     /// <summary>
+    /// Performs validation of the cart product entity using the CartProductValidator rules.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="ValidationResultDetail"/> containing validation results and any errors.
+    /// </returns>
+    /// <remarks>
+    /// <para>The validation includes checking:</para>
+    /// <list type="bullet">
+    /// <item><description>Product external ID is not empty</description></item>
+    /// <item><description>Product name is not empty</description></item>
+    /// <item><description>Quantity is between 1 and 20</description></item>
+    /// <item><description>Unit price is greater than zero</description></item>
+    /// <item><description>Discount percentage is within valid range</description></item>
+    /// </list>
+    /// </remarks>
+    public ValidationResultDetail Validate()
+    {
+        var validator = new CartProductValidator();
+        var result = validator.Validate(this);
+        return new ValidationResultDetail
+        {
+            IsValid = result.IsValid,
+            Errors = result.Errors.Select(o => (ValidationErrorDetail)o)
+        };
+    }
+
+    /// <summary>
     /// Retrieves the discount percentage for the given quantity using the DiscountPolicy.
     /// </summary>
     /// <param name="quantity">The quantity of the product.</param>

@@ -16,11 +16,6 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.UseCases.CalculateCartDisc
             RuleFor(x => x.CustomerId)
                 .NotEmpty().WithMessage("Customer ID is required");
                 
-            // Customer details now fetched from repository based on CustomerId
-            
-            // Branch fields made optional
-            // BranchExternalId and BranchName can be null and will be defaulted in the handler
-                
             RuleFor(x => x.Date)
                 .NotEmpty().WithMessage("Date is required")
                 .Must(date => date <= DateTime.Now).WithMessage("Date cannot be in the future");

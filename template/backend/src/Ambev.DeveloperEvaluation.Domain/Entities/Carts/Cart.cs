@@ -1,6 +1,7 @@
 ﻿using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Validation;
 
@@ -80,7 +81,7 @@ public class Cart : BaseEntity
 
         _products = [];
 
-        //AddDomainEvent(new CartCreatedEvent(this));
+        AddDomainEvent(new CartCreatedEvent(this));
     }
 
     public ValidationResultDetail Validate()
@@ -112,6 +113,8 @@ public class Cart : BaseEntity
         var product = new CartProduct(productExternalId, productName, quantity, unitPrice);
 
         _products.Add(product);
+        
+        AddDomainEvent(new CartModifiedEvent(this));
     }
 
 
@@ -132,7 +135,8 @@ public class Cart : BaseEntity
             throw new DomainException("Cart item not found.");
 
         _products.Remove(cartItem);
-        //AddDomainEvent(new ProductCancelledEvent(this, cartItemId));
+        AddDomainEvent(new CartProductCancelledEvent(this, cartItemId));
+        AddDomainEvent(new CartModifiedEvent(this));
     }
 
     /// <summary>
@@ -154,5 +158,6 @@ public class Cart : BaseEntity
     public void CancelCart()
     {
         Status = CartStatus.Cancelled;
+        AddDomainEvent(new CartCancelledEvent(this));
     }
 }

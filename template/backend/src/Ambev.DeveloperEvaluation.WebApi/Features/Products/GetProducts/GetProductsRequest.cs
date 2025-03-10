@@ -1,17 +1,14 @@
+using Ambev.DeveloperEvaluation.WebApi.Common;
+
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProducts;
 
 /// <summary>
-/// Request model for retrieving products with pagination
+/// Request model for retrieving products with pagination.
 /// </summary>
-public class GetProductsRequest
+/// <remarks>
+/// Inherits pagination parameters (PageNumber and PageSize) from <see cref="PaginationRequest"/>.
+/// </remarks>
+public class GetProductsRequest : PaginationRequest
 {
-    /// <summary>
-    /// The page number (starting from 1)
-    /// </summary>
-    public int PageNumber { get; set; } = 1;
-
-    /// <summary>
-    /// The number of items per page
-    /// </summary>
-    public int PageSize { get; set; } = 10;
+    // Inherits PageNumber and PageSize from PaginationRequest
 } 

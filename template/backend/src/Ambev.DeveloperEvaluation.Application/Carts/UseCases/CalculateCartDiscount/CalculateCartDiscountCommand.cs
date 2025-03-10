@@ -18,22 +18,22 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.UseCases.CalculateCartDisc
         /// <summary>
         /// The customer name for the cart
         /// </summary>
-        public string CustomerName { get; set; }
+        public string CustomerName { get; set; } = string.Empty;
         
         /// <summary>
         /// The customer email for the cart
         /// </summary>
-        public string CustomerEmail { get; set; }
+        public string CustomerEmail { get; set; } = string.Empty;
         
         /// <summary>
         /// The branch external ID for the cart
         /// </summary>
-        public string BranchExternalId { get; set; }
+        public string BranchExternalId { get; set; } = string.Empty;
         
         /// <summary>
         /// The branch name for the cart
         /// </summary>
-        public string BranchName { get; set; }
+        public string BranchName { get; set; } = string.Empty;
         
         /// <summary>
         /// The date for the cart
@@ -43,7 +43,7 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.UseCases.CalculateCartDisc
         /// <summary>
         /// The products in the cart
         /// </summary>
-        public List<CalculateCartDiscountProductCommand> Products { get; set; }
+        public List<CalculateCartDiscountProductCommand> Products { get; set; } = [];
     }
     
     /// <summary>
@@ -59,7 +59,7 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.UseCases.CalculateCartDisc
         /// <summary>
         /// The product name
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         
         /// <summary>
         /// The product price

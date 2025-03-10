@@ -43,14 +43,14 @@ public class GetCartsHandlerTests
         { 
             new Cart(
                 DateTime.UtcNow,
-                command.CustomerId!.Value,
+                command.CustomerId,
                 "Customer Name",
                 Guid.NewGuid(),
                 "Branch 1"
             ),
             new Cart(
                 DateTime.UtcNow,
-                command.CustomerId!.Value,
+                command.CustomerId,
                 "Customer Name",
                 Guid.NewGuid(),
                 "Branch 2"
@@ -59,9 +59,9 @@ public class GetCartsHandlerTests
         var cartResults = new List<CartResult> { new CartResult(), new CartResult() };
         const int totalCount = 5;
 
-        _cartRepository.GetAllPagedByCustomerAsync(command.CustomerId!.Value, command.PageNumber, command.PageSize, Arg.Any<CancellationToken>())
+        _cartRepository.GetAllPagedByCustomerAsync(command.CustomerId, command.PageNumber, command.PageSize, Arg.Any<CancellationToken>())
             .Returns(carts);
-        _cartRepository.CountByCustomerAsync(command.CustomerId!.Value, Arg.Any<CancellationToken>())
+        _cartRepository.CountByCustomerAsync(command.CustomerId, Arg.Any<CancellationToken>())
             .Returns(totalCount);
         _mapper.Map<List<CartResult>>(carts)
             .Returns(cartResults);
@@ -77,59 +77,8 @@ public class GetCartsHandlerTests
         result.PageSize.Should().Be(command.PageSize);
         
         await _cartRepository.Received(1).GetAllPagedByCustomerAsync(
-            command.CustomerId!.Value, command.PageNumber, command.PageSize, Arg.Any<CancellationToken>());
-        await _cartRepository.Received(1).CountByCustomerAsync(command.CustomerId!.Value, Arg.Any<CancellationToken>());
+            command.CustomerId, command.PageNumber, command.PageSize, Arg.Any<CancellationToken>());
+        await _cartRepository.Received(1).CountByCustomerAsync(command.CustomerId, Arg.Any<CancellationToken>());
         _mapper.Received(1).Map<List<CartResult>>(carts);
-    }
-
-    /// <summary>
-    /// Tests that an invalid GetCarts command with a negative page number throws a validation exception.
-    /// </summary>
-    [Fact(DisplayName = "Given invalid command with negative page number When handling Then throws validation exception")]
-    public async Task Handle_InvalidCommandWithNegativePageNumber_ThrowsValidationException()
-    {
-        // Given
-        var command = GetCartsTestData.GenerateInvalidCommandWithNegativePageNumber();
-
-        // When
-        var act = () => _handler.Handle(command, CancellationToken.None);
-
-        // Then
-        await act.Should().ThrowAsync<ValidationException>()
-            .Where(ex => ex.Errors.Any(e => e.ErrorMessage.Contains("Page number must be greater than 0")));
-    }
-
-    /// <summary>
-    /// Tests that an invalid GetCarts command with a negative page size throws a validation exception.
-    /// </summary>
-    [Fact(DisplayName = "Given invalid command with negative page size When handling Then throws validation exception")]
-    public async Task Handle_InvalidCommandWithNegativePageSize_ThrowsValidationException()
-    {
-        // Given
-        var command = GetCartsTestData.GenerateInvalidCommandWithNegativePageSize();
-
-        // When
-        var act = () => _handler.Handle(command, CancellationToken.None);
-
-        // Then
-        await act.Should().ThrowAsync<ValidationException>()
-            .Where(ex => ex.Errors.Any(e => e.ErrorMessage.Contains("Page size must be greater than 0")));
-    }
-
-    /// <summary>
-    /// Tests that an invalid GetCarts command with an excessive page size throws a validation exception.
-    /// </summary>
-    [Fact(DisplayName = "Given invalid command with excessive page size When handling Then throws validation exception")]
-    public async Task Handle_InvalidCommandWithExcessivePageSize_ThrowsValidationException()
-    {
-        // Given
-        var command = GetCartsTestData.GenerateInvalidCommandWithExcessivePageSize();
-
-        // When
-        var act = () => _handler.Handle(command, CancellationToken.None);
-
-        // Then
-        await act.Should().ThrowAsync<ValidationException>()
-            .Where(ex => ex.Errors.Any(e => e.ErrorMessage.Contains("Page size must not exceed 100")));
     }
 } 

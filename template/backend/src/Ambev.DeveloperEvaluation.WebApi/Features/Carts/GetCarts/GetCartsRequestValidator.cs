@@ -1,22 +1,20 @@
-using FluentValidation;
+using Ambev.DeveloperEvaluation.WebApi.Common;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetCarts;
 
 /// <summary>
-/// Validator for GetCartsRequest
+/// Validator for <see cref="GetCartsRequest"/> that enforces validation rules for cart list requests.
 /// </summary>
-public class GetCartsRequestValidator : AbstractValidator<GetCartsRequest>
+/// <remarks>
+/// Inherits common pagination validation rules from <see cref="PaginationRequestValidator{T}"/>.
+/// </remarks>
+public class GetCartsRequestValidator : PaginationRequestValidator<GetCartsRequest>
 {
     /// <summary>
-    /// Initializes a new instance of GetCartsRequestValidator
+    /// Initializes a new instance of the <see cref="GetCartsRequestValidator"/> class.
     /// </summary>
-    public GetCartsRequestValidator()
+    public GetCartsRequestValidator() : base()
     {
-        RuleFor(x => x.PageNumber)
-            .GreaterThan(0).WithMessage("Page number must be greater than 0");
-
-        RuleFor(x => x.PageSize)
-            .GreaterThan(0).WithMessage("Page size must be greater than 0")
-            .LessThanOrEqualTo(100).WithMessage("Page size must not exceed 100");
+        // Additional cart-specific validation rules can be added here
     }
 } 
