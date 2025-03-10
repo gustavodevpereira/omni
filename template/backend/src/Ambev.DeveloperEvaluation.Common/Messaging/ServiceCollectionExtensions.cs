@@ -22,10 +22,8 @@ public static class ServiceCollectionExtensions
     /// <returns>The service collection with the message broker configured.</returns>
     public static IServiceCollection AddMessageBroker(this IServiceCollection services, IConfiguration configuration)
     {
-        // Get RabbitMQ connection string from configuration or use default with correct credentials
-        var rabbitMqConnectionString = configuration.GetConnectionString("RabbitMQ") 
-            ?? "amqp://developer:ev%40luAt10n@localhost:50731";
-        
+        var rabbitMqConnectionString = configuration.GetConnectionString("RabbitMQ");
+
         // Get queue name from configuration or use default
         var queueName = configuration["MessageBroker:QueueName"] ?? "ambev_events";
 
