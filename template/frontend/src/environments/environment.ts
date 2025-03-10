@@ -1,6 +1,8 @@
-import { Environment } from './environment.interface';
-
-export const environment: Environment = {
+/**
+ * Development environment configuration
+ * Contains values specific to the development environment
+ */
+export const environment = {
   production: false,
-  apiUrl: 'https://localhost:7181/api'
-};
+  apiUrl: 'https://localhost:7181/api/'
+}; 

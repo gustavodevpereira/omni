@@ -1,55 +1,61 @@
-import { Component, OnInit } from '@angular/core';
-import { LayoutComponent } from './core/layout/layout.component';
-import { NotificationService } from './core/services/notification.service';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSidenavModule, MatSidenav } from '@angular/material/sidenav';
+import { CommonModule } from '@angular/common';
+import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from './core/services/auth.service';
+import { User } from './core/api/models/domain.model';
 
-/**
- * Root component of the application.
- * 
- * This is the entry point of the application UI. It serves as the
- * container for the main layout and handles initial application setup,
- * such as checking authentication status on startup.
- */
 @Component({
   selector: 'app-root',
+  templateUrl: './app.component.html',
   standalone: true,
-  imports: [LayoutComponent],
-  template: `<app-layout></app-layout>`,
-  styles: []
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSidenavModule
+  ],
+  styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
-  title = 'Ambev Store';
-
-  /**
-   * Creates an instance of AppComponent.
-   * 
-   * @param authService Service for authentication operations
-   * @param notificationService Service for displaying notifications to users
-   */
-  constructor(
-    private authService: AuthService,
-    private notificationService: NotificationService
-  ) {}
-
-  /**
-   * Lifecycle hook called after component initialization.
-   * Checks authentication status and restores user session if needed.
-   */
+export class AppComponent implements OnInit, OnDestroy {
+  title = 'Angular Store';
+  isAuthenticated = false;
+  currentUser: User | null = null;
+  
+  @ViewChild('sidenav') sidenav!: MatSidenav;
+  
+  private destroy$ = new Subject<void>();
+  
+  constructor(private authService: AuthService) {}
+  
   ngOnInit(): void {
-    this.checkAuthStatus();
-  }
-
-  /**
-   * Checks if user is authenticated on application initialization.
-   * Displays relevant notifications based on authentication status.
-   */
-  private checkAuthStatus(): void {
-    if (this.authService.isLoggedIn()) {
-      this.authService.getCurrentUser().subscribe(user => {
-        if (user) {
-          this.notificationService.info(`Welcome back, ${user.name || user.email}`);
-        }
+    // Observar o estado de autenticação
+    this.authService.isAuthenticated$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(isAuthenticated => {
+        this.isAuthenticated = isAuthenticated;
       });
-    }
+      
+    // Observar o usuário atual
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        this.currentUser = user;
+      });
+  }
+  
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+  
+  logout(): void {
+    this.authService.logout();
   }
 }
