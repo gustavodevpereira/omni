@@ -1,0 +1,47 @@
+# Arquivos do .NET e Visual Studio
+bin/
+obj/
+*.user
+*.suo
+*.vs/
+.vscode/
+*.sln.docstates
+.idea/
+
+# Secrets
+*.pfx
+*.key
+*.pem
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+!appsettings.Production.json
+
+# Variáveis de ambiente
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+
+# Arquivos gerados
+wwwroot/lib/
+wwwroot/dist/
+
+# Docker volumes
+**/volumes/
+
+# Dependências
+node_modules/
+packages/
+vendor/
+
+# Arquivos temporários
+*.tmp
+*.temp
+*.bak
+
+# Cache
+.cache/ 
