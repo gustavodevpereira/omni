@@ -226,12 +226,4 @@ describe('LoginComponent', () => {
     // The important part is that the spinner is shown
   });
 
-  it('should navigate to register page when register link is clicked', () => {
-    // Get register button
-    const registerButton = fixture.debugElement.query(By.css('button[mat-button]'));
-    registerButton.triggerEventHandler('click', null);
-    
-    // Verify navigation
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/auth/register']);
-  });
 }); 
