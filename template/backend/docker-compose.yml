@@ -1,22 +1,27 @@
 version: '3.8'
 
 services:
-  ambev.developerevaluation.webapi:
-    container_name: ambev_developer_evaluation_webapi
-    image: ${DOCKER_REGISTRY-}ambevdeveloperevaluationwebapi
+  webapi:
+    container_name: ambev_backend
     build:
       context: .
-      dockerfile: src/Ambev.DeveloperEvaluation.WebApi/Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
       - "8081:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_URLS=http://+:8080;https://+:8081
     depends_on:
-      - ambev.developerevaluation.database
-      - ambev.developerevaluation.cache
-      - ambev.developerevaluation.messagebroker
+      - database
+      - nosql
+      - cache
+      - messagebroker
 
-  ambev.developerevaluation.database:
-    container_name: ambev_developer_evaluation_database
+  database:
+    container_name: ambev_database
     image: postgres:13
     environment:
       POSTGRES_DB: developer_evaluation
@@ -27,17 +32,17 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  ambev.developerevaluation.nosql:
-    container_name: ambev_developer_evaluation_nosql 
+  nosql:
+    container_name: ambev_nosql 
     image: mongo:8.0    
     environment:
         MONGO_INITDB_ROOT_USERNAME: developer
         MONGO_INITDB_ROOT_PASSWORD: ev@luAt10n
     ports:
-      - "27017"
+      - "27017:27017"
 
-  ambev.developerevaluation.cache:
-    container_name: ambev_developer_evaluation_cache
+  cache:
+    container_name: ambev_cache
     image: redis:7.4.1-alpine
     command: redis-server --requirepass ev@luAt10n
     ports:
@@ -45,8 +50,8 @@ services:
     volumes:
       - redis_data:/data
 
-  ambev.developerevaluation.messagebroker:
-    container_name: ambev_developer_evaluation_messagebroker
+  messagebroker:
+    container_name: ambev_messagebroker
     image: rabbitmq:3.12-management
     hostname: rabbitmq
     environment:
@@ -62,4 +67,4 @@ services:
 volumes:
   postgres_data:
   redis_data:
-  rabbitmq_data:
+  rabbitmq_data: 

@@ -1,18 +1,14 @@
 version: '3.8'
 
 services:
-  ambev.developerevaluation.frontend:
-    container_name: ambev_developer_evaluation_frontend
+  frontend:
+    container_name: ambev_frontend
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "4200:80"
     volumes:
-      - ./src:/app/src
-    networks:
-      - ambev-evaluation-network
-
-networks:
-  ambev-evaluation-network:
-    external: true 
+      - ./src:/app/src  # Para desenvolvimento, observa alterações
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Para acessar localhost da máquina host 

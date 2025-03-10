@@ -4,5 +4,5 @@
  */
 export const environment = {
   production: false,
-  apiUrl: '/api/'
+  apiUrl: '/api/'  // O Nginx configurado redirecionará para o host.docker.internal:8080/api/
 }; 
