@@ -1,5 +1,6 @@
 ﻿using Xunit;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects.DiscountPolicy;
+using Ambev.DeveloperEvaluation.Domain.Exceptions;
 using Ambev.DeveloperEvaluation.Unit.Domain.Mocks.CartMock;
 
 namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.CartTest;
