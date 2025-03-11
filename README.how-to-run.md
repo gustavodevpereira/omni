@@ -13,6 +13,7 @@ This will start:
 - Angular frontend application (USED)
 
 # Access the application:
+    Note: The backend layer relies on some seed data (you can check it in the Program.cs file of the WebApi layer), so some entities are already created.
    - Frontend: http://localhost:4200
    - Backend API: http://localhost:8080 - admin account: (username: admin@example.com, password: Admin123!)
    - Swagger UI: http://localhost:8080/swagger
