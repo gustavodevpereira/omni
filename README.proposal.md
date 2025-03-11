@@ -33,3 +33,8 @@ As you may have noticed, domain events are published to a RabbitMQ queue. Howeve
 Since event data is denormalized, it fits better in a **non-relational database**—which is likely why such a database is included in the `docker-compose` file. 
 
 These stored events could be used by an AI agent or as part of a **CQRS strategy**, where view models are persisted separately from the master data layer.
+
+### 4. Choosing the Primary Key (GUID)
+
+Although we use GUIDs as primary keys in our entities within BaseEntity, they can cause issues when it comes to database indexing. This can significantly slow down the database, and personally, I don't believe this is the best approach.
+To address this, we could switch to a sequential ID. However, doing so might lead to serious challenges with database partitioning when scaling horizontally. While this could be managed through database architecture, I believe the most cost-effective solution is to use a sequential GUID (which is not natively supported in C#). By adopting this sequential behavior, we can avoid indexing issues in our database system while ensuring that IDs remain (statistically) unique, even when partitioning.
