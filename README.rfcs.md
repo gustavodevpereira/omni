@@ -1,6 +1,10 @@
 ## Requests for Comments (RFCs)
 
-Here, I'll discuss the project's issues and propose long-term improvements. Since this is a prototype, there were many problems that I did not address.
+Here, I'll discuss the project's issues and propose long-term improvements. Since this is a prototype, there were many problems I did not address.
+
+First, I want to present my idea through a software architecture diagram. The following RFCs will be based on this structure for the e-commerce product.
+
+![Architecture Proposal](architecture-proposal.png)
 
 ### 1. The Monolithic Approach
 
@@ -15,6 +19,8 @@ Additionally, the frontend could be split into three micro-frontends: `Login`, `
 As I progressed with the project, I felt that this approach would make future refactorings easier. You can already see some indications of this within the current implementation. 
 
 Of course, I did not implement it this way because it was out of scope. A good intermediate solution would be to refactor the system into a **modular monolith**. Then, whenever horizontal scaling is needed, we could extract modules into microservices as necessary.
+
+You can see
 
 ### 2. Caching
 
