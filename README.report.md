@@ -21,7 +21,7 @@ I leveraged this existing design, making the implementation straightforward.
 
 #### **The Domain Events Problem**  
 
-As required by the challenge, I had to implement domain events. My approach was to use a base class to absorb domain events within the domain layer.  
+As required by the challenge, I had to implement domain events. My approach was to use the **BaseEntity** to absorb domain events within the domain layer.  
 Every action in the domain that required an event would instantiate it in the base class, persisting it in a domain events list.  
 
 However, that alone was not enough. I also implemented a `UnitOfWork` to handle `SaveChanges` when the ORM attempted to save an entity. The `UnitOfWork` ensured that domain events were delivered to the Mediator.  
