@@ -1,8 +1,5 @@
 # Backend Project Structure Guide
 
-## Overview
-This is a .NET-based backend application following Domain-Driven Design (DDD) and Clean Architecture principles. The solution is structured in layers with clear separation of concerns and follows SOLID principles.
-
 ## Project Structure
 
 ```

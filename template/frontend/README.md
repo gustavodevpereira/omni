@@ -1,8 +1,5 @@
 # Frontend Project Structure Guide
 
-## Overview
-This is an Angular-based frontend application following a modular architecture with lazy loading and clean code principles. The application is structured to be scalable, maintainable, and follows best practices for Angular development.
-
 ## Project Structure
 
 ```
