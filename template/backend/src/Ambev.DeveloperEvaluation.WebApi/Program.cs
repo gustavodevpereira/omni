@@ -116,7 +116,6 @@ public class Program
             
             app.UseMiddleware<GlobalExceptionMiddleware>();
 
-            // Habilitar CORS - política padrão sem restrições
             app.UseCors();
 
             if (app.Environment.IsDevelopment())
@@ -134,7 +133,6 @@ public class Program
 
             app.MapControllers();
 
-            // Aplicar migrações do Entity Framework
             Log.Information("Applying database migrations if needed...");
             using (var scope = app.Services.CreateScope())
             {
