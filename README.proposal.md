@@ -20,8 +20,6 @@ As I progressed with the project, I felt that this approach would make future re
 
 Of course, I did not implement it this way because it was out of scope. A good intermediate solution would be to refactor the system into a **modular monolith**. Then, whenever horizontal scaling is needed, we could extract modules into microservices as necessary.
 
-You can see
-
 ### 2. Caching
 
 While developing, I realized that listing products and carts would be a good use case for caching. These data points do not change frequently. 
